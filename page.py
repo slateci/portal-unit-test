@@ -47,38 +47,52 @@ class MainPage(BasePage):
 
 
 class AppsPage(BasePage):
-    def wait_until_apps_table_loaded(self):
+    def wait_until_apps_table_loaded(self, tab_name):
+        next_btn_id = 'apps-table_next'
+        if tab_name == 'Incubator Applications':
+            next_btn_id = 'incubator-apps-table_next'
         WebDriverWait(self.driver, 60).until(
-            EC.presence_of_element_located((By.ID, "apps-table_next"))
+            EC.presence_of_element_located((By.ID, next_btn_id))
         )
         
-    def get_app_links_on_cur_page(self):
-        self.wait_until_apps_table_loaded()
-        apps_table = self.driver.find_element_by_id('apps-table')
+    def get_app_links_on_cur_page(self, tab_name):
+        # self.wait_until_apps_table_loaded(tab_name)
+        table_id = 'apps-table'
+        if tab_name == 'Incubator Applications':
+            table_id = 'incubator-apps-table'
+        apps_table = self.driver.find_element_by_id(table_id)
         app_links = apps_table.find_elements_by_tag_name('a')
         return app_links
     
-    def get_cur_display_page_num(self):
-        self.wait_until_apps_table_loaded()
-        pages = self.driver.find_element_by_id('apps-table_paginate')
-        cur_display_page = WebDriverWait(self.driver, 60).until(
-            EC.presence_of_element_located((By.XPATH, "//li[@class='paginate_button page-item active']"))
+    def click_cur_page(self, tab_name, page_number):
+        pages_id = 'apps-table_paginate'
+        if tab_name == 'Incubator Applications':
+            pages_id = 'incubator-apps-table_paginate'
+        pages = self.driver.find_element_by_id(pages_id)
+        # page_to_click = pages.find_element_by_link_text(str(page_number))
+        page_to_click = WebDriverWait(pages, 60).until(
+            EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
         )
-        return int(cur_display_page.text)
-    
-    def click_to_page(self, page_number):
-        pages = self.driver.find_element_by_id('apps-table_paginate')
-        click_to_page = pages.find_element_by_link_text(str(page_number))
-        click_to_page.click()
+        if not page_to_click.is_selected():
+            page_to_click.click()
 
-    def get_next_button(self):
-        return self.driver.find_element_by_id('apps-table_next')
+    def get_next_button(self, tab_name):
+        next_btn_id = 'apps-table_next'
+        if tab_name == 'Incubator Applications':
+            next_btn_id = 'incubator-apps-table_next'
+        return self.driver.find_element_by_id(next_btn_id)
 
     def get_stable_apps_tab(self):
         return self.driver.find_element_by_link_text('Stable Applications')
 
     def get_inbubator_apps_tab(self):
         return self.driver.find_element_by_link_text('Incubator Applications')
+    
+    def click_incubator_apps_tab(self):
+        incubator_tab = self.get_inbubator_apps_tab()
+        if not incubator_tab.is_selected():
+            incubator_tab.click()
+
 
 
 class AppDetailPage(BasePage):  
