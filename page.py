@@ -96,7 +96,91 @@ class AppsPage(BasePage):
 
 
 class AppDetailPage(BasePage):  
-    pass  
+    pass
+
+
+class ClustersPage(BasePage):
+    def wait_until_apps_table_loaded(self):
+        WebDriverWait(self.driver, 60).until(
+            EC.presence_of_element_located((By.ID, next_btn_id))
+        )
+
+    def get_cluster_links_on_cur_page(self):
+        pass
+
+    def click_cur_page(self, page_number):
+        pass
+
+    def get_next_button(self):
+        pass
+
+
+class ClusterProfilePage(BasePage):
+    pass
+
+
+class SecretsPage(BasePage):
+    def get_secret_links_on_cur_page(self):
+        pass
+
+    def click_cur_page(self, page_number):
+        pass
+
+    def get_next_button(self):
+        pass
+
+
+class SecretGroupPage(BasePage):
+    pass
+
+
+class InstancesPage(BasePage):
+    def get_instance_links_on_cur_page(self):
+        pass
+
+    def click_cur_page(self, page_number):
+        pass
+
+    def get_next_button(self):
+        pass
+
+
+class InstanceProfilePage(BasePage):
+    pass
+
+
+class MyGroupsPage(BasePage):
+    def get_my_group_links_on_cur_page(self):
+        pass
+
+    def click_cur_page(self, page_number):
+        pass
+
+    def get_next_button(self):
+        pass
+
+
+class MyGroupProfilePage(BasePage):
+    pass
+
+
+class PublicGroupsPage(BasePage):
+    def get_pub_group_links_on_cur_page(self):
+        pass
+
+    def click_cur_page(self, page_number):
+        pass
+
+    def get_next_button(self):
+        pass
+
+
+class PublicGroupProfilePage(BasePage):
+    pass
+
+
+class CLIAccessPage(BasePage):
+    pass
 
 
 class SearchResultPage(BasePage):
