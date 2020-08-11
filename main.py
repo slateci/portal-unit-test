@@ -1,12 +1,14 @@
 import unittest
-from selenium.webdriver import Chrome
+from selenium.webdriver import Chrome, Firefox
 import page
 import time
+import sys
 
 
 class PortalBrowsing(unittest.TestCase):
     def setUp(self):
-        self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
+        # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
+        self.driver = Firefox('/opt/WebDriver/bin/')
         self.driver.get('https://portal.slateci.io/slate_portal')
     
     def test_check_app_pages(self):
