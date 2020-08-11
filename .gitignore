@@ -1,0 +1,13 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Application data
+rebates/files/
+rebates/logs/
+*.log
+*.txt
+!/*requirements.txt
+*.iif
+*.pem
