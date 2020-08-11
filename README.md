@@ -3,9 +3,9 @@
 ## Test Environment Set Up
 The test was developed on Mac OS, using Chrome web browser and Python. For test set up using other OS and/or browsers, please refer to the [Selenium documentation](https://www.selenium.dev/documentation/en/)
 ### Install Selenium library for Python
-    ```bash
-    $ pip install selenium
-    ```
+```bash
+$ pip install selenium
+```
 ### Install WebDriver binary
 1. Selenium requires a corresponding driver to interface with the choosen drive. To download the correct driver, click this [Selenium-Python documentation](https://selenium-python.readthedocs.io/installation.html)
 2. For example, if the Chrome used for testing is at version `84.0.4147.105`, then download the `ChromeDriver 84.0.4147.30` from [WebDriver for Chrome](https://sites.google.com/a/chromium.org/chromedriver/downloads)
