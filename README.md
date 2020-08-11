@@ -13,9 +13,10 @@ $ pip install selenium
     ```bash
     export PATH=$PATH:/opt/WebDriver/bin
     ```
-4. Make the `chromedriver` executatble. Navigate to the folder of `chromedriver` and run the following command:
+4. To bypass the notarization requirement on macOS, navigate to the folder of WebDriver. </br>
+For `chromedriver` run the following command:
     ```bash
-    chmod +x chromedriver
+    xattr -d com.apple.quarantine chromedriver 
     ```
 5. Instantiate a Chrome session in Python using the file path from previous example:
     ```python
