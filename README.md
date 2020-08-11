@@ -14,10 +14,15 @@ $ pip install selenium
     export PATH=$PATH:/opt/WebDriver/bin
     ```
 4. To bypass the notarization requirement on macOS, navigate to the folder of WebDriver. </br>
-For `chromedriver` run the following command:
-    ```bash
-    xattr -d com.apple.quarantine chromedriver 
-    ```
+    *   For `chromedriver` run the following command:
+        ```bash
+        xattr -r -d com.apple.quarantine chromedriver 
+        ```
+    *   For `geckodriver` (FireFox) run the following command:
+        ```bash
+        xattr -r -d com.apple.quarantine geckodriver 
+        ```
+
 5. Instantiate a Chrome session in Python using the file path from previous example:
     ```python
     from selenium.webdriver import Chrome
@@ -26,5 +31,7 @@ For `chromedriver` run the following command:
     ```
 
 
-## Test Set Up
-This test is set up using the page object pattern detailed in the Selenium-Python documentation. Click this [LINK](https://selenium-python.readthedocs.io/page-objects.html) from reference.
+## Run Test
+```bash
+$ python main.py
+```
