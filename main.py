@@ -1,5 +1,6 @@
 import unittest
 from selenium.webdriver import Chrome, Firefox
+from selenium.webdriver.firefox.options import Options
 import page
 import time
 import sys
@@ -8,7 +9,10 @@ import sys
 class PortalBrowsing(unittest.TestCase):
     def setUp(self):
         # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
-        self.driver = Firefox('/opt/WebDriver/bin/')
+        # self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver')
+        options = Options()
+        options.headless = True
+        self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver', options=options)
         self.driver.get('https://portal.slateci.io/slate_portal')
     
     def test_check_app_pages(self):
