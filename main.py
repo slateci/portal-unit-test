@@ -1,6 +1,9 @@
 import unittest
 from selenium.webdriver import Chrome, Firefox
-from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.firefox.options import Options as FirefoxOptions
+from selenium.webdriver.chrome.options import Options as ChromeOptions
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import page
 import time
 import sys
@@ -8,23 +11,32 @@ import sys
 
 class PortalBrowsing(unittest.TestCase):
     def setUp(self):
-        # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
+        # test with Firefox, without headless()
         # self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver')
-        options = Options()
+        # test with Firefox, with headless()
+        options = FirefoxOptions()
         options.headless = True
         self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver', options=options)
+
+        # test with chrome, without headless()
+        # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
+        # test with chrome, with headless()
+        # options = ChromeOptions()
+        # options.headless = True
+        # self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
+
+        # portal on minislate
+        # self.driver.get('http://localhost:5000/slate_portal')
+        # slate portal
         self.driver.get('https://portal.slateci.io/slate_portal')
+        self.driver.set_window_size(1920, 1080)
     
     def test_check_app_pages(self):
         main_page = page.MainPage(self.driver)
         main_page.go_to_apps_page()
         assert main_page.is_page_valid()
-        # print('11111', main_page.get_page_source())
         apps_page = page.AppsPage(self.driver)
         assert apps_page.is_page_valid()
-        
-        # tab_name = 'Stable Applications'
-        # tab_name = 'Incubator Applications'
 
         for tab_name in ['Stable Applications', 'Incubator Applications']:
             page_number = 1
