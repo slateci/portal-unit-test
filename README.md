@@ -53,5 +53,5 @@ This test is set up using the page object pattern detailed in the Selenium-Pytho
 
 ## Run Test
 ```bash
-$ python main.py
+$ python3 main.py
 ```

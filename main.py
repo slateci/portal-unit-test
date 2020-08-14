@@ -26,9 +26,9 @@ class PortalBrowsing(unittest.TestCase):
         # self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
 
         # portal on minislate
-        # self.driver.get('http://localhost:5000/slate_portal')
+        self.driver.get('http://localhost:5000/slate_portal')
         # slate portal
-        self.driver.get('https://portal.slateci.io/slate_portal')
+        # self.driver.get('https://portal.slateci.io/slate_portal')
         self.driver.set_window_size(1920, 1080)
     
     def test_check_app_pages(self):
