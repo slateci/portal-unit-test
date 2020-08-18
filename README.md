@@ -68,7 +68,8 @@ If the above command does not work in macOS, add line `export PATH=$PATH:/opt/We
     1597169870563	geckodriver	INFO	Listening on 127.0.0.1:4444
     ```
 ### Bypass the notarization requirement on macOS
-* navigate to the folder of WebDriver.
+* macOS notarization requirement can prevent the WebDriver from running
+* Navigate to the folder of WebDriver.
 * For `chromedriver` run the following command:
     ```bash
     xattr -r -d com.apple.quarantine chromedriver 
