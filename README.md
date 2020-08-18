@@ -96,7 +96,7 @@ ch_driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=ch
 # test with Firefox
 ff_options = FirefoxOptions()
 ff_options.headless = True 
-ff_driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver', options=ffox_options)
+ff_driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver', options=ff_options)
 ```
 
 ## Test Set Up
