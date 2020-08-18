@@ -81,7 +81,7 @@ If the above command does not work in macOS, add line `export PATH=$PATH:/opt/We
 
 ### Instantiate Chrome and Firefox Sessions In Python 
 ```python
-from selenium.webdriver import Chrome
+from selenium.webdriver import Chrome, Firefox
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 
