@@ -94,8 +94,8 @@ ch_options.headless = True
 ch_driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=ch_options)
 
 # test with Firefox
-ffox_options = FirefoxOptions()
-ffox_options.headless = True 
+ff_options = FirefoxOptions()
+ff_options.headless = True 
 ff_driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver', options=ffox_options)
 ```
 
