@@ -24,26 +24,52 @@ class BasePage():
         page_source = self.driver.page_source
         return 'container-error-404' not in page_source or 'container-error-500' not in page_source
 
+class BasePageLoggedIn(BasePage):
+    pass
 
-class MainPage(BasePage):
+class DashboardPage(BasePage):
     search_text_element = SearchTextElement()
 
     def is_title_matches(self):
         return 'SLATE - Portal' in self.driver.title
     
+    def go_to_clusters_page(self):
+        clusters_button = self.driver.find_element(*DashboardPageLocators.CLUSTERS_SIDE_BTN)
+        clusters_button.click()
+    
     def go_to_apps_page(self):
-        button = self.driver.find_element(*MainPageLocators.VIEW_ALL_APPS_BTN)
-        button.click()
+        apps_button = self.driver.find_element(*DashboardPageLocators.APPS_SIDE_BTN)
+        apps_button.click()
+    
+    def go_to_secrets_page(self):
+        secrets_button = self.driver.find_element(*DashboardPageLocators.SECRETS_SIDE_BTN)
+        secrets_button.click()
+    
+    def go_to_instances_page(self):
+        instances_button = self.driver.find_element(*DashboardPageLocators.INSTANCES_SIDE_BTN)
+        instances_button.click()
 
-    def is_apps_link_button_same(self):
-        link = self.driver.find_element(*MainPageLocators.APPS_LINK)
-        link.click()
-        link_dest = self.driver.title
-        self.driver.back()
-        button = self.driver.find_element(*MainPageLocators.VIEW_ALL_APPS_BTN)
-        button.click()
-        button_dest = self.driver.title
-        return link_dest == button_dest
+    def go_to_my_groups_page(self):
+        my_groups_button = self.driver.find_element(*DashboardPageLocators.MY_GROUPS_SIDE_BTN)
+        my_groups_button.click()
+    
+    def go_to_all_groups_page(self):
+        all_groups_button = self.driver.find_element(*DashboardPageLocators.ALL_GROUPS_SIDE_BTN)
+        all_groups_button.click()
+    
+    def go_to_cli_access_page(self):
+        cli_access_button = self.driver.find_element(*DashboardPageLocators.CLI_ACCESS_SIDE_BTN)
+        cli_access_button.click()
+
+    # def is_apps_link_button_same(self):
+    #     link = self.driver.find_element(*DashboardPageLocators.APPS_LINK)
+    #     link.click()
+    #     link_dest = self.driver.title
+    #     self.driver.back()
+    #     button = self.driver.find_element(*DashboardPageLocators.VIEW_ALL_APPS_BTN)
+    #     button.click()
+    #     button_dest = self.driver.title
+    #     return link_dest == button_dest
 
 
 class AppsPage(BasePage):
@@ -83,10 +109,12 @@ class AppsPage(BasePage):
         return self.driver.find_element_by_id(next_btn_id)
 
     def get_stable_apps_tab(self):
-        return self.driver.find_element_by_link_text('Stable Applications')
+        return self.driver.find_element(*AppsPageLocators.STABLE_APPS_TAB)
+        # return self.driver.find_element_by_link_text('Stable Applications')
 
     def get_inbubator_apps_tab(self):
-        return self.driver.find_element_by_link_text('Incubator Applications')
+        return self.driver.find_element(*AppsPageLocators.INCUBATOR_APPS_TAB)
+        # return self.driver.find_element_by_link_text('Incubator Applications')
     
     def click_incubator_apps_tab(self):
         incubator_tab = self.get_inbubator_apps_tab()
@@ -100,19 +128,26 @@ class AppDetailPage(BasePage):
 
 
 class ClustersPage(BasePage):
-    def wait_until_apps_table_loaded(self):
+    def wait_until_clusters_table_loaded(self):
         WebDriverWait(self.driver, 60).until(
-            EC.presence_of_element_located((By.ID, next_btn_id))
+            EC.presence_of_element_located((By.ID, 'cluster-table_next'))
         )
 
     def get_cluster_links_on_cur_page(self):
-        pass
+        clusters_table = self.driver.find_element_by_id('cluster-table')
+        cluster_links = clusters_table.find_elements_by_tag_name('a')
+        return cluster_links
 
     def click_cur_page(self, page_number):
-        pass
+        pages = self.driver.find_element_by_id('cluster-table_paginate')
+        page_to_click = WebDriverWait(pages, 60).until(
+            EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
+        )
+        if not page_to_click.is_selected():
+            page_to_click.click()
 
     def get_next_button(self):
-        pass
+        return self.driver.find_element_by_id('cluster-table_next')
 
 
 class ClusterProfilePage(BasePage):
@@ -120,6 +155,11 @@ class ClusterProfilePage(BasePage):
 
 
 class SecretsPage(BasePage):
+    def wait_until_secrets_table_loaded(self):
+        WebDriverWait(self.driver, 60).until(
+            EC.presence_of_element_located((By.ID, 'secrets-table_next'))
+        )
+
     def get_secret_links_on_cur_page(self):
         pass
 
@@ -135,47 +175,56 @@ class SecretGroupPage(BasePage):
 
 
 class InstancesPage(BasePage):
+    def wait_until_instances_table_loaded(self):
+        WebDriverWait(self.driver, 60).until(
+            EC.presence_of_element_located((By.ID, 'instance-table_next'))
+        )
+
     def get_instance_links_on_cur_page(self):
-        pass
+        instances_table = self.driver.find_element_by_id('instance-table')
+        instance_links = instances_table.find_elements_by_tag_name('a')
+        return instance_links
 
     def click_cur_page(self, page_number):
-        pass
+        pages = self.driver.find_element_by_id('instance-table_paginate')
+        page_to_click = WebDriverWait(pages, 60).until(
+            EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
+        )
+        if not page_to_click.is_selected():
+            page_to_click.click()
 
     def get_next_button(self):
-        pass
+        return self.driver.find_element_by_id('instance-table_next')
 
 
 class InstanceProfilePage(BasePage):
     pass
 
 
-class MyGroupsPage(BasePage):
-    def get_my_group_links_on_cur_page(self):
-        pass
+class GroupsPage(BasePage):
+    def wait_until_groups_table_loaded(self):
+        WebDriverWait(self.driver, 60).until(
+            EC.presence_of_element_located((By.ID, 'groups-table_next'))
+        )
+    
+    def get_group_links_on_cur_page(self):
+        groups_table = self.driver.find_element_by_id('groups-table')
+        group_links = groups_table.find_elements_by_tag_name('a')
+        return group_links
 
     def click_cur_page(self, page_number):
-        pass
+        pages = self.driver.find_element_by_id('groups-table_paginate')
+        page_to_click = WebDriverWait(pages, 60).until(
+            EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
+        )
+        if not page_to_click.is_selected():
+            page_to_click.click()
 
     def get_next_button(self):
-        pass
+        return self.driver.find_element_by_id('groups-table_next')
 
 
-class MyGroupProfilePage(BasePage):
-    pass
-
-
-class PublicGroupsPage(BasePage):
-    def get_pub_group_links_on_cur_page(self):
-        pass
-
-    def click_cur_page(self, page_number):
-        pass
-
-    def get_next_button(self):
-        pass
-
-
-class PublicGroupProfilePage(BasePage):
+class GroupsProfilePage(BasePage):
     pass
 
 
