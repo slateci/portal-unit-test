@@ -1,5 +1,6 @@
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from locator import *
 from element import BasePageElement
@@ -22,7 +23,10 @@ class BasePage():
 
     def is_page_valid(self):
         page_source = self.driver.page_source
-        return 'container-error-404' not in page_source or 'container-error-500' not in page_source
+        return 'container-error-404' not in page_source and 'container-error-500' not in page_source and 'Python Stacktrace:' not in page_source
+    
+    def click_back_btn(self):
+        self.driver.back()
 
 class BasePageLoggedIn(BasePage):
     pass
@@ -198,8 +202,25 @@ class InstancesPage(BasePage):
 
 
 class InstanceProfilePage(BasePage):
-    pass
+    def get_instance_name(self):
+        instance_name = self.driver.find_element_by_xpath("//div[@class='col-lg-12 mx-auto']/h2[1]")
+        return instance_name.text.split()[-1]
 
+    def get_cluster_name(self):
+        cluster_name = self.driver.find_element_by_xpath("//div[@class='col-lg-12 mx-auto']/h6[4]")
+        return cluster_name.text.split()[-1]
+    
+    def get_group_name(self):
+        group_name = self.driver.find_element_by_xpath("//div[@class='col-lg-12 mx-auto']/h6[5]")
+        return group_name.text.split()[-1]
+    
+    def get_delete_button(self):
+        delete_button = self.driver.find_element_by_link_text('Delete Instance')
+        return delete_button
+    
+    def switch_to_alert_popup(self):
+        return self.driver.switch_to.alert
+    
 
 class GroupsPage(BasePage):
     def wait_until_groups_table_loaded(self):
@@ -224,7 +245,41 @@ class GroupsPage(BasePage):
         return self.driver.find_element_by_id('groups-table_next')
 
 
-class GroupsProfilePage(BasePage):
+class MyGroupsPage(GroupsPage):
+    def get_register_new_group_btn(self):
+        return self.driver.find_element_by_link_text('Register New Group')
+
+
+class CreateNewGroupPage(BasePage):
+    def wait_until_form_loaded(self):
+        WebDriverWait(self.driver, 60).until(
+            EC.presence_of_element_located((By.ID, 'cli-access')))
+
+    def fill_group_name(self, group_name):
+        group_name_field = self.driver.find_element_by_id('name')
+        group_name_field.send_keys(group_name)
+    
+    def fill_phone_number(self, phone_number):
+        phone_number_field = self.driver.find_element_by_id('phone-number')
+        phone_number_field.send_keys(phone_number)
+    
+    def fill_email(self, email):
+        email_field = self.driver.find_element_by_id('email')
+        email_field.send_keys(email)
+
+    def fill_field_of_science(self, field_of_science):
+        field = self.driver.find_element_by_id('field-of-science')
+        field.send_keys(field_of_science)
+    
+    def fill_description(self, description):
+        description_field = self.driver.find_element_by_id('description')
+        description_field.send_keys(description)
+    
+    def create_group(self):
+        create_btn = self.driver.find_element_by_xpath("//button[@type='submit'][@class='btn btn-primary']")
+        create_btn.click()
+
+class GroupProfilePage(BasePage):
     pass
 
 

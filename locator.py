@@ -14,10 +14,11 @@ class DashboardPageLocators():
     ALL_GROUPS_SIDE_BTN = (By.XPATH, "//a[@class='nav-link js-scroll-trigger'][@href='/public-groups']")
     CLI_ACCESS_SIDE_BTN = (By.XPATH, "//a[@class='nav-link js-scroll-trigger'][@href='/cli']")
 
+
 class AppsPageLocators():
     STABLE_APPS_TAB = (By.LINK_TEXT, 'Stable Applications')
     INCUBATOR_APPS_TAB = (By.LINK_TEXT, 'Incubator Applications')
-    pass
+
 
 class SearchResultsPageLocators():
     pass
