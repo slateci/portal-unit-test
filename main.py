@@ -246,8 +246,8 @@ class FuncTests(unittest.TestCase):
         # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
         # test with chrome, with headless()
         options = ChromeOptions()
-        # options.headless = True
-        options.headless = False
+        options.headless = True
+        # options.headless = False
         self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
 
         # portal on minislate
@@ -279,35 +279,38 @@ class FuncTests(unittest.TestCase):
         instances_page.wait_until_instances_table_loaded()
         instance_links = instances_page.get_instance_links_on_cur_page()
         
-        print('attempting to delete instance:', instance_links[0].text)
-        instance_links[0].click()
-        instance_detail_page = page.InstanceProfilePage(self.driver)
-        assert instance_detail_page.is_page_valid()
+        if not instance_links:
+            print('there is not instance to be deleted')
+        else:
+            print('attempting to delete instance:', instance_links[0].text)
+            instance_links[0].click()
+            instance_detail_page = page.InstanceProfilePage(self.driver)
+            assert instance_detail_page.is_page_valid()
 
-        instance_name = instance_detail_page.get_instance_name()
-        cluster_name = instance_detail_page.get_cluster_name()
-        group_name = instance_detail_page.get_group_name()
+            instance_name = instance_detail_page.get_instance_name()
+            cluster_name = instance_detail_page.get_cluster_name()
+            group_name = instance_detail_page.get_group_name()
 
-        print('print instance name:', instance_name)
-        print('print cluster name:', cluster_name)
-        print('print group name:', group_name)
+            print('print instance name:', instance_name)
+            print('print cluster name:', cluster_name)
+            print('print group name:', group_name)
 
-        if cluster_name == 'my-cluster' and group_name == 'my-group':
-            print('Click Delete button of instance:', instance_name)
-            instance_detail_page.get_delete_button().click()
-            try:
-                alert = instance_detail_page.switch_to_alert_popup()
-                time.sleep(1)
-                alert.dismiss()
-                print('Alert pop up dismissed')
-            except:
-                print('Alert pop up not dismissed')
+            if cluster_name == 'my-cluster' and group_name == 'my-group':
+                print('Click Delete button of instance:', instance_name)
+                instance_detail_page.get_delete_button().click()
+                try:
+                    alert = instance_detail_page.switch_to_alert_popup()
+                    time.sleep(1)
+                    alert.dismiss()
+                    print('Alert pop up dismissed')
+                except:
+                    print('Alert pop up not dismissed')
 
-            try:
-                self.driver.back()
-                self.driver.back()
-            except:
-                print('Back button does not work')
+                try:
+                    self.driver.back()
+                    self.driver.back()
+                except:
+                    print('Back button does not work')
     
 
     def test_instance_delete_accept(self):
