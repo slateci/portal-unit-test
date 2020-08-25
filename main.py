@@ -22,8 +22,8 @@ class PortalBrowsing(unittest.TestCase):
         # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
         # test with chrome, with headless()
         options = ChromeOptions()
-        # options.headless = True
-        options.headless = False
+        options.headless = True
+        # options.headless = False
         self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
 
         # portal on minislate
@@ -274,6 +274,7 @@ class FuncTests(unittest.TestCase):
     
     def test_instance_delete_dismiss(self):
         instances_page = self.segue_to_page('instances')
+        instances_page.create_nginx_instance()
         
         instances_page.wait_until_instances_table_loaded()
         instance_links = instances_page.get_instance_links_on_cur_page()

@@ -4,7 +4,7 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from locator import *
 from element import BasePageElement
-
+import os
 
 class SearchTextElement(BasePageElement):
     locator = 'q'
@@ -65,23 +65,13 @@ class DashboardPage(BasePage):
         cli_access_button = self.driver.find_element(*DashboardPageLocators.CLI_ACCESS_SIDE_BTN)
         cli_access_button.click()
 
-    # def is_apps_link_button_same(self):
-    #     link = self.driver.find_element(*DashboardPageLocators.APPS_LINK)
-    #     link.click()
-    #     link_dest = self.driver.title
-    #     self.driver.back()
-    #     button = self.driver.find_element(*DashboardPageLocators.VIEW_ALL_APPS_BTN)
-    #     button.click()
-    #     button_dest = self.driver.title
-    #     return link_dest == button_dest
-
 
 class AppsPage(BasePage):
     def wait_until_apps_table_loaded(self, tab_name):
         next_btn_id = 'apps-table_next'
         if tab_name == 'Incubator Applications':
             next_btn_id = 'incubator-apps-table_next'
-        WebDriverWait(self.driver, 60).until(
+        WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.ID, next_btn_id))
         )
         
@@ -100,7 +90,7 @@ class AppsPage(BasePage):
             pages_id = 'incubator-apps-table_paginate'
         pages = self.driver.find_element_by_id(pages_id)
         # page_to_click = pages.find_element_by_link_text(str(page_number))
-        page_to_click = WebDriverWait(pages, 60).until(
+        page_to_click = WebDriverWait(pages, 20).until(
             EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
         )
         if not page_to_click.is_selected():
@@ -126,14 +116,13 @@ class AppsPage(BasePage):
             incubator_tab.click()
 
 
-
 class AppDetailPage(BasePage):  
     pass
 
 
 class ClustersPage(BasePage):
     def wait_until_clusters_table_loaded(self):
-        WebDriverWait(self.driver, 60).until(
+        WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.ID, 'cluster-table_next'))
         )
 
@@ -144,7 +133,7 @@ class ClustersPage(BasePage):
 
     def click_cur_page(self, page_number):
         pages = self.driver.find_element_by_id('cluster-table_paginate')
-        page_to_click = WebDriverWait(pages, 60).until(
+        page_to_click = WebDriverWait(pages, 20).until(
             EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
         )
         if not page_to_click.is_selected():
@@ -160,7 +149,7 @@ class ClusterProfilePage(BasePage):
 
 class SecretsPage(BasePage):
     def wait_until_secrets_table_loaded(self):
-        WebDriverWait(self.driver, 60).until(
+        WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.ID, 'secrets-table_next'))
         )
 
@@ -180,7 +169,7 @@ class SecretGroupPage(BasePage):
 
 class InstancesPage(BasePage):
     def wait_until_instances_table_loaded(self):
-        WebDriverWait(self.driver, 60).until(
+        WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.ID, 'instance-table_next'))
         )
 
@@ -191,7 +180,7 @@ class InstancesPage(BasePage):
 
     def click_cur_page(self, page_number):
         pages = self.driver.find_element_by_id('instance-table_paginate')
-        page_to_click = WebDriverWait(pages, 60).until(
+        page_to_click = WebDriverWait(pages, 20).until(
             EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
         )
         if not page_to_click.is_selected():
@@ -199,6 +188,9 @@ class InstancesPage(BasePage):
 
     def get_next_button(self):
         return self.driver.find_element_by_id('instance-table_next')
+    
+    def create_nginx_instance(self):
+        os.system('pwd')
 
 
 class InstanceProfilePage(BasePage):
@@ -224,7 +216,7 @@ class InstanceProfilePage(BasePage):
 
 class GroupsPage(BasePage):
     def wait_until_groups_table_loaded(self):
-        WebDriverWait(self.driver, 60).until(
+        WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.ID, 'groups-table_next'))
         )
     
@@ -235,7 +227,7 @@ class GroupsPage(BasePage):
 
     def click_cur_page(self, page_number):
         pages = self.driver.find_element_by_id('groups-table_paginate')
-        page_to_click = WebDriverWait(pages, 60).until(
+        page_to_click = WebDriverWait(pages, 20).until(
             EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
         )
         if not page_to_click.is_selected():
@@ -252,7 +244,7 @@ class MyGroupsPage(GroupsPage):
 
 class CreateNewGroupPage(BasePage):
     def wait_until_form_loaded(self):
-        WebDriverWait(self.driver, 60).until(
+        WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.ID, 'cli-access')))
 
     def fill_group_name(self, group_name):
@@ -278,6 +270,7 @@ class CreateNewGroupPage(BasePage):
     def create_group(self):
         create_btn = self.driver.find_element_by_xpath("//button[@type='submit'][@class='btn btn-primary']")
         create_btn.click()
+
 
 class GroupProfilePage(BasePage):
     pass
