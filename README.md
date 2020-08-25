@@ -102,7 +102,32 @@ ff_driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver', options=ff
 ## Test Set Up
 This test is set up using the page object pattern detailed in the Selenium-Python documentation. Click this [LINK](https://selenium-python.readthedocs.io/page-objects.html) from reference.
 
+## Tests Structure 
+    .
+    ├── ...
+    ├── main.py                 
+    │   ├── PortalBrowsing                          # tests to iterate through web pages
+    │   │   ├── test_iterate_clusters_pages
+    │   │   ├── test_iterate_apps_pages
+    │   │   ├── test_iterate_instances_pages
+    │   │   ├── test_iterate_my_groups_pages
+    │   │   ├── test_iterate_all_groups_pages
+    │   │   └── test_check_cli_access_pag
+    │   └── FuncTests                               # tests to modify instance/group in the portal
+    │       ├── test_instance_delete_dismiss
+    │       ├── test_instance_delete_accept
+    │       └── test_add_new_group            
+    └── ...
 ## Run Test
+To run all tests
 ```bash
 $ python3 main.py
+```
+To run a type of tests. For example, PortalBrowsing tests
+```bash
+$ python3 main.py PortalBrowsing
+```
+To run a specific test. For example, test_instance_delete_accept in FuncTests
+```bash
+$ python3 main.py FuncTests.test_instance_delete_accept
 ```

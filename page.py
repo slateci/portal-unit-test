@@ -137,10 +137,10 @@ class ClustersPage(BasePage):
             EC.presence_of_element_located((By.ID, 'cluster-table_next'))
         )
 
-    def get_cluster_links_on_cur_page(self):
+    def get_clusters_links_on_cur_page(self):
         clusters_table = self.driver.find_element_by_id('cluster-table')
-        cluster_links = clusters_table.find_elements_by_tag_name('a')
-        return cluster_links
+        clusters_links = clusters_table.find_elements_by_tag_name('a')
+        return clusters_links
 
     def click_cur_page(self, page_number):
         pages = self.driver.find_element_by_id('cluster-table_paginate')
