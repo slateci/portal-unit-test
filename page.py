@@ -1,4 +1,4 @@
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.ui import WebDriverWait, Select
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
@@ -27,6 +27,7 @@ class BasePage():
     
     def click_back_btn(self):
         self.driver.back()
+
 
 class BasePageLoggedIn(BasePage):
     pass
@@ -116,8 +117,38 @@ class AppsPage(BasePage):
             incubator_tab.click()
 
 
-class AppDetailPage(BasePage):  
-    pass
+class AppsDetailPage(BasePage):  
+    def wait_until_ready_for_install(self):
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'app_readme'))
+        )
+    
+    def click_intall_app(self):
+        self.driver.find_element(*AppsDetailPageLocators.INSTALL_APP_BTN).click()
+
+
+class AppCreatePage(BasePage):
+    def fill_group(self):
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//select[@id='group']/option[@value='my-group']"))
+        )
+        select = Select(self.driver.find_element_by_id('group'))
+        select.select_by_value('my-group')
+    
+    def click_next(self):
+        self.driver.find_element(*AppCreatePageLocators.NEXT_BTN).click()
+
+
+class AppCreateFinalPage(BasePage):
+    def fill_cluster(self):
+        WebDriverWait(self.driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, "//select[@id='cluster']/option[@value='my-cluster']"))
+        )
+        select = Select(self.driver.find_element_by_id('cluster'))
+        select.select_by_value('my-cluster')
+
+    def click_install(self):
+        self.driver.find_element(*AppCreateFinalPageLocators.INSTALL_BTN).click()
 
 
 class ClustersPage(BasePage):

@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import page
 import time
-import sys
+import os
 
 
 class PortalBrowsing(unittest.TestCase):
@@ -85,7 +85,7 @@ class PortalBrowsing(unittest.TestCase):
                 for i in range(number_of_links):
                     print('Testing app page:', app_links[i].text)
                     app_links[i].click()
-                    app_detail_page = page.AppDetailPage(self.driver)
+                    app_detail_page = page.AppsDetailPage(self.driver)
                     assert app_detail_page.is_page_valid()
                     self.driver.back()
 
@@ -246,8 +246,8 @@ class FuncTests(unittest.TestCase):
         # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
         # test with chrome, with headless()
         options = ChromeOptions()
-        options.headless = True
-        # options.headless = False
+        # options.headless = True
+        options.headless = False
         self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
 
         # portal on minislate
@@ -263,6 +263,9 @@ class FuncTests(unittest.TestCase):
         if page_name == 'clusters':
             dashboard_page.go_to_clusters_page()
             cur_page = page.ClustersPage(self.driver)
+        elif page_name == 'applications':
+            dashboard_page.go_to_apps_page()
+            cur_page = page.AppsPage(self.driver)
         elif page_name == 'instances':
             dashboard_page.go_to_instances_page()
             cur_page = page.InstancesPage(self.driver)
@@ -272,7 +275,59 @@ class FuncTests(unittest.TestCase):
         assert cur_page.is_page_valid()
         return cur_page
     
-    def test_instance_delete_dismiss(self):
+    def test_add_instance(self):
+        apps_page = self.segue_to_page('applications')
+        app_to_install = 'nginx'
+        installed = False
+        # find the app
+        page_number = 1
+        click_next = True
+        while click_next:
+            apps_page.wait_until_apps_table_loaded('Stable Applications')
+            app_links = apps_page.get_app_links_on_cur_page('Stable Applications')
+            number_of_links = len(app_links)
+
+            print('page number', page_number)
+
+            for i in range(number_of_links):
+                print('Testing app page:', app_links[i].text)
+                if app_links[i].text == app_to_install:
+                    click_next = False
+                    app_links[i].click()
+                    app_detail_page = page.AppsDetailPage(self.driver)
+                    assert app_detail_page.is_page_valid()
+
+                    app_detail_page.wait_until_ready_for_install()
+                    app_detail_page.click_intall_app()
+                    
+                    app_create_page = page.AppCreatePage(self.driver)
+                    assert app_create_page.is_page_valid()
+
+                    app_create_page.fill_group()
+                    app_create_page.click_next()
+
+                    app_create_final_page = page.AppCreateFinalPage(self.driver)
+                    assert app_create_final_page.is_page_valid()
+
+                    app_create_final_page.fill_cluster()
+                    app_create_final_page.click_install()
+
+                    # enter instance detail page; check instance name
+                    instance_detail_page = page.InstanceProfilePage(self.driver)
+                    assert instance_detail_page.is_page_valid()
+
+                    instance_name = instance_detail_page.get_instance_name()
+                    print('see here', instance_name)
+                    assert instance_name.split('-')[0] == app_to_install
+                    
+                    # change install flag to true
+                    installed = True
+                    break
+        # check install flag
+        assert installed
+
+
+    def skip_test_instance_delete_dismiss(self):
         instances_page = self.segue_to_page('instances')
         instances_page.create_nginx_instance()
         
@@ -319,45 +374,52 @@ class FuncTests(unittest.TestCase):
         instances_page.wait_until_instances_table_loaded()
         instance_links = instances_page.get_instance_links_on_cur_page()
 
-        if not instance_links:
-            print('there is not instance to be deleted')
-        else:
-            print('attempting to delete instance:', instance_links[0].text)
-            instance_links[0].click()
-            instance_detail_page = page.InstanceProfilePage(self.driver)
-            assert instance_detail_page.is_page_valid()
+        # here tried to add a new instance
+        # if not instance_links:
+        #     print('there is no instances, install a new nginx instance')
+        #     self.test_add_instance()
 
-            instance_name = instance_detail_page.get_instance_name()
-            cluster_name = instance_detail_page.get_cluster_name()
-            group_name = instance_detail_page.get_group_name()
+        #     self.driver.back()
+        
+        #     instances_page.wait_until_instances_table_loaded()
+        #     instance_links = instances_page.get_instance_links_on_cur_page()
 
-            print('print instance name:', instance_name)
-            print('print cluster name:', cluster_name)
-            print('print group name:', group_name)
+        print('attempting to delete instance:', instance_links[0].text)
+        instance_links[0].click()
+        instance_detail_page = page.InstanceProfilePage(self.driver)
+        assert instance_detail_page.is_page_valid()
 
-            if cluster_name == 'my-cluster' and group_name == 'my-group':
-                print('Click Delete button of instance:', instance_name)
-                instance_detail_page.get_delete_button().click()
-                try:
-                    alert = instance_detail_page.switch_to_alert_popup()
-                    time.sleep(1)
-                    alert.accept()
-                    print('Alert pop up accepted')
-                except:
-                    print('Error occur at confirming instance delete')
-                
-                instances_page.wait_until_instances_table_loaded()
-                instance_links = instances_page.get_instance_links_on_cur_page()
-                existing_instances = [instance_links[i].text for i in instance_links]
-                assert instance_name not in existing_instances
-                print('Instance {} successfully deleted'.format(instance_name))
+        instance_name = instance_detail_page.get_instance_name()
+        cluster_name = instance_detail_page.get_cluster_name()
+        group_name = instance_detail_page.get_group_name()
+
+        print('print instance name:', instance_name)
+        print('print cluster name:', cluster_name)
+        print('print group name:', group_name)
+
+        if cluster_name == 'my-cluster' and group_name == 'my-group':
+            print('Click Delete button of instance:', instance_name)
+            instance_detail_page.get_delete_button().click()
+            try:
+                alert = instance_detail_page.switch_to_alert_popup()
+                time.sleep(1)
+                alert.accept()
+                print('Alert pop up accepted')
+            except:
+                print('Error occur at confirming instance delete')
+            
+            instances_page.wait_until_instances_table_loaded()
+            instance_links = instances_page.get_instance_links_on_cur_page()
+            existing_instances = [instance_links[i].text for i in instance_links]
+            assert instance_name not in existing_instances
+            print('Instance {} successfully deleted'.format(instance_name))
 
 
-    def test_add_new_group(self):
+    def skip_test_add_new_group(self):
         my_groups_page = self.segue_to_page('my_groups')
         my_groups_page.get_register_new_group_btn().click()
         create_new_group = page.CreateNewGroupPage(self.driver)
-        create_new_group.fill_group_name('my-group')
+        create_new_group.fill_group_name('test-group')
         create_new_group.fill_field_of_science('Biology')
         create_new_group.create_group()
         
@@ -366,7 +428,7 @@ class FuncTests(unittest.TestCase):
     
     def tearDown(self):
         # self.driver.implicitly_wait(3)
-        time.sleep(3)
+        time.sleep(4)
         self.driver.close()
 
 if __name__ == '__main__':

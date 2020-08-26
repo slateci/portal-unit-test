@@ -114,6 +114,7 @@ This test is set up using the page object pattern detailed in the Selenium-Pytho
     │   │   ├── test_iterate_all_groups_pages
     │   │   └── test_check_cli_access_pag
     │   └── FuncTests                               # tests to modify instance/group in the portal
+    │       ├── test_add_instance
     │       ├── test_instance_delete_dismiss
     │       ├── test_instance_delete_accept
     │       └── test_add_new_group            

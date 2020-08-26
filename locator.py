@@ -20,5 +20,15 @@ class AppsPageLocators():
     INCUBATOR_APPS_TAB = (By.LINK_TEXT, 'Incubator Applications')
 
 
+class AppsDetailPageLocators():
+    INSTALL_APP_BTN = (By.XPATH, "//div[@class='install-app']")
+    ADD_NEW_SECRET_BTN = (By.XPATH, "//div[@style='padding-left: 10px;']")
+
+class AppCreatePageLocators():
+    NEXT_BTN = (By.XPATH, "//button[@type='submit']")
+
+class AppCreateFinalPageLocators():
+    INSTALL_BTN = (By.XPATH, "//button[@type='submit']")
+
 class SearchResultsPageLocators():
     pass
