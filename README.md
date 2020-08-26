@@ -112,7 +112,7 @@ This test is set up using the page object pattern detailed in the Selenium-Pytho
     │   │   ├── test_iterate_instances_pages
     │   │   ├── test_iterate_my_groups_pages
     │   │   ├── test_iterate_all_groups_pages
-    │   │   └── test_check_cli_access_pag
+    │   │   └── test_check_cli_access_page
     │   └── FuncTests                               # tests to modify instance/group in the portal
     │       ├── test_add_instance                   # add an Nginx instance
     │       ├── test_instance_delete_accept         # delete the added Nginx instance
