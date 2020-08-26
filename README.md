@@ -116,7 +116,9 @@ This test is set up using the page object pattern detailed in the Selenium-Pytho
     │   └── FuncTests                               # tests to modify instance/group in the portal
     │       ├── test_add_instance                   # add an Nginx instance
     │       ├── test_instance_delete_accept         # delete the added Nginx instance
-    │       └── test_add_new_group                  # add a "test group" group
+    │       ├── test_add_new_group                  # add a "test-group" group
+    │       ├── test_edit_group                     # edit "test-group" group
+    │       └── test_delete_group                   # delete "test-group" group
     └── ...
 ## Run Test
 To run all tests
