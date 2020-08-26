@@ -415,7 +415,7 @@ class FuncTests(unittest.TestCase):
             print('Instance {} successfully deleted'.format(instance_name))
 
 
-    def skip_test_add_new_group(self):
+    def test_add_new_group(self):
         my_groups_page = self.segue_to_page('my_groups')
         my_groups_page.get_register_new_group_btn().click()
         create_new_group = page.CreateNewGroupPage(self.driver)
