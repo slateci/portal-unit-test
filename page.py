@@ -256,6 +256,11 @@ class GroupsPage(BasePage):
         group_links = groups_table.find_elements_by_tag_name('a')
         return group_links
 
+    def get_group(self, group_name):
+        groups_table = self.driver.find_element_by_id('groups-table')
+        group = groups_table.find_element_by_link_text(group_name)
+        return group
+
     def click_cur_page(self, page_number):
         pages = self.driver.find_element_by_id('groups-table_paginate')
         page_to_click = WebDriverWait(pages, 20).until(
@@ -304,8 +309,47 @@ class CreateNewGroupPage(BasePage):
 
 
 class GroupProfilePage(BasePage):
-    pass
+    def wait_until_page_loaded(self):
+        WebDriverWait(self.driver, 20).until(
+            EC.presence_of_element_located((By.ID, 'group-info')))
+        
+    def get_edit_btn(self):
+        return self.driver.find_element_by_link_text('Edit Info') 
 
+    def get_delete_group_btn(self):
+        return self.driver.find_element_by_xpath("//form[@action='/groups/test-group/delete']")
+
+    def switch_to_alert_popup(self):
+        return self.driver.switch_to.alert
+
+
+class GroupEditPage(BasePage):
+    def wait_until_form_loaded(self):
+        WebDriverWait(self.driver, 20).until(
+            EC.presence_of_element_located((By.ID, 'cli-access')))
+    
+    def update_email(self, email):
+        email_field = self.driver.find_element_by_id('email')
+        email_field.clear()
+        email_field.send_keys(email)
+
+    def update_phone_number(self, phone_number):
+        phone_number_field = self.driver.find_element_by_id('phone-number')
+        phone_number_field.clear()
+        phone_number_field.send_keys(phone_number)
+    
+    def update_field_of_science(self, field_of_science):
+        field_sc = self.driver.find_element_by_id('field-of-science')
+        field_sc.send_keys(field_of_science)
+    
+    def update_description(self, description):
+        description_field = self.driver.find_element_by_id('description')
+        description_field.clear()
+        description_field.send_keys(description)
+    
+    def update_group(self):
+        update_btn = self.driver.find_element_by_xpath("//button[@type='submit'][@class='btn btn-primary btn-box-shadow']")
+        update_btn.click()
 
 class CLIAccessPage(BasePage):
     pass

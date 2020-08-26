@@ -22,8 +22,8 @@ class PortalBrowsing(unittest.TestCase):
         # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
         # test with chrome, with headless()
         options = ChromeOptions()
-        options.headless = True
-        # options.headless = False
+        # options.headless = True
+        options.headless = False
         self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
 
         # portal on minislate
@@ -276,6 +276,7 @@ class FuncTests(unittest.TestCase):
         return cur_page
     
     def test_add_instance(self):
+        print('test_add_instance')
         apps_page = self.segue_to_page('applications')
         app_to_install = 'nginx'
         installed = False
@@ -369,6 +370,7 @@ class FuncTests(unittest.TestCase):
     
 
     def test_instance_delete_accept(self):
+        print('test_instance_delete_accept')
         instances_page = self.segue_to_page('instances')
         
         instances_page.wait_until_instances_table_loaded()
@@ -416,6 +418,7 @@ class FuncTests(unittest.TestCase):
 
 
     def test_add_new_group(self):
+        print('test_add_new_group')
         my_groups_page = self.segue_to_page('my_groups')
         my_groups_page.get_register_new_group_btn().click()
         create_new_group = page.CreateNewGroupPage(self.driver)
@@ -425,10 +428,60 @@ class FuncTests(unittest.TestCase):
         
         group_profile_page = page.GroupProfilePage(self.driver)
         assert group_profile_page.is_page_valid()
+
+
+    def test_edit_group(self):
+        print('test_edit_group')
+        my_groups_page = self.segue_to_page('my_groups')
+        my_groups_page.wait_until_groups_table_loaded()
+        group = my_groups_page.get_group('test-group')
+        group.click()
+
+        group_profile_page = page.GroupProfilePage(self.driver)
+        assert group_profile_page.is_page_valid()
+        group_profile_page.wait_until_page_loaded
+        group_profile_page.get_edit_btn().click()
+
+        group_edit_page = page.GroupEditPage(self.driver)
+        assert group_edit_page.is_page_valid()
+        group_edit_page.wait_until_form_loaded()
+        group_edit_page.update_email('selenium-test@slateci.io')
+        group_edit_page.update_phone_number('777-7777')
+        group_edit_page.update_field_of_science('Physics')
+        group_edit_page.update_description('Testing group edit functionality')
+        # click update
+        group_edit_page.update_group()
+
+        # here should add assert to confirm group info updated
+        group_edit_page.wait_until_form_loaded()
+        assert group_edit_page.is_page_valid()
+
+
+    def test_delete_group(self):
+        print('test_delete_group')
+        my_groups_page = self.segue_to_page('my_groups')
+        my_groups_page.wait_until_groups_table_loaded()
+        group = my_groups_page.get_group('test-group')
+        group.click()
+
+        group_profile_page = page.GroupProfilePage(self.driver)
+        assert group_profile_page.is_page_valid()
+        group_profile_page.wait_until_page_loaded
+        group_profile_page.get_delete_group_btn().click()
+        try:
+            alert = group_profile_page.switch_to_alert_popup()
+            time.sleep(1)
+            alert.accept()
+            print('Alert pop up accepted')
+        except:
+            print('Error occur at confirming instance delete')
+        
+        # here add script to confirm group deleted
     
+
     def tearDown(self):
         # self.driver.implicitly_wait(3)
-        time.sleep(4)
+        time.sleep(3)
         self.driver.close()
 
 if __name__ == '__main__':
