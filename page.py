@@ -28,16 +28,6 @@ class BasePage():
     def click_back_btn(self):
         self.driver.back()
 
-
-class BasePageLoggedIn(BasePage):
-    pass
-
-class DashboardPage(BasePage):
-    search_text_element = SearchTextElement()
-
-    def is_title_matches(self):
-        return 'SLATE - Portal' in self.driver.title
-    
     def go_to_clusters_page(self):
         clusters_button = self.driver.find_element(*DashboardPageLocators.CLUSTERS_SIDE_BTN)
         clusters_button.click()
@@ -67,6 +57,15 @@ class DashboardPage(BasePage):
         cli_access_button.click()
 
 
+class BasePageLoggedIn(BasePage):
+    pass
+
+class DashboardPage(BasePage):
+    search_text_element = SearchTextElement()
+    def is_title_matches(self):
+        return 'SLATE - Portal' in self.driver.title
+
+
 class AppsPage(BasePage):
     def wait_until_apps_table_loaded(self, tab_name):
         next_btn_id = 'apps-table_next'
@@ -90,7 +89,6 @@ class AppsPage(BasePage):
         if tab_name == 'Incubator Applications':
             pages_id = 'incubator-apps-table_paginate'
         pages = self.driver.find_element_by_id(pages_id)
-        # page_to_click = pages.find_element_by_link_text(str(page_number))
         page_to_click = WebDriverWait(pages, 20).until(
             EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
         )
@@ -105,16 +103,22 @@ class AppsPage(BasePage):
 
     def get_stable_apps_tab(self):
         return self.driver.find_element(*AppsPageLocators.STABLE_APPS_TAB)
-        # return self.driver.find_element_by_link_text('Stable Applications')
 
     def get_inbubator_apps_tab(self):
         return self.driver.find_element(*AppsPageLocators.INCUBATOR_APPS_TAB)
-        # return self.driver.find_element_by_link_text('Incubator Applications')
     
     def click_incubator_apps_tab(self):
         incubator_tab = self.get_inbubator_apps_tab()
         if not incubator_tab.is_selected():
             incubator_tab.click()
+
+    def get_app_link(self, app_name): # for app install
+        apps_table = self.driver.find_element_by_id('apps-table')
+        try:
+            app_link = apps_table.find_element_by_link_text(app_name)
+            return app_link
+        except:
+            return None
 
 
 class AppsDetailPage(BasePage):  
@@ -146,6 +150,22 @@ class AppCreateFinalPage(BasePage):
         )
         select = Select(self.driver.find_element_by_id('cluster'))
         select.select_by_value('my-cluster')
+
+    def fill_configuration(self, app_suffix=''):
+        conf_field = self.driver.find_element_by_id('config')
+        # print(conf_field.text)
+        config_arr = conf_field.text.split('\n')
+
+        # add suffix to app name
+        for idx, line in enumerate(config_arr):
+            if 'Instance:' in line:
+                print(line)
+                config_arr[idx] = "Instance: {}".format(app_suffix)
+                break
+        
+        conf_field.clear()
+        conf_field.send_keys('\n'.join(config_arr))
+        print('\n'.join(config_arr))
 
     def click_install(self):
         self.driver.find_element(*AppCreateFinalPageLocators.INSTALL_BTN).click()
@@ -219,9 +239,9 @@ class InstancesPage(BasePage):
 
     def get_next_button(self):
         return self.driver.find_element_by_id('instance-table_next')
-    
-    def create_nginx_instance(self):
-        os.system('pwd')
+
+    def get_instance_link(self, instance_name):
+        pass
 
 
 class InstanceProfilePage(BasePage):
