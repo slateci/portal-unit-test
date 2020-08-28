@@ -6,7 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 import page
 import time
-import os
+# import os
 
 
 class PortalBrowsing(unittest.TestCase):
@@ -72,8 +72,7 @@ class PortalBrowsing(unittest.TestCase):
             click_next = True
             if tab_name == 'Incubator Applications':
                 apps_page.click_incubator_apps_tab()
-                # here wait till table loaded
-                # time.sleep(2)
+                self.driver.implicitly_wait(3) # implicitly waiting for Incubator Applications tab loaded
 
             while click_next:
                 apps_page.wait_until_apps_table_loaded(tab_name)
@@ -330,7 +329,7 @@ class FuncTests(unittest.TestCase):
 
 
     def test_delete_instance(self):
-        print('test_instance_delete_accept')
+        print('test_delete_instance')
         # add a new instance for delete
         app_name = 'nginx'
         app_suffix = 'test-delete'
@@ -459,6 +458,10 @@ class FuncTests(unittest.TestCase):
         # confirm group deleted
         group_link = my_groups_page.get_group_link(group_name)
         assert not group_link
+
+    
+    def add_secret(self):
+        pass
     
 
     def tearDown(self):

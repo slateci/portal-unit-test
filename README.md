@@ -115,8 +115,8 @@ This test is set up using the page object pattern detailed in the Selenium-Pytho
     │   │   └── test_check_cli_access_page
     │   └── FuncTests                               # tests to modify instance/group through the portal
     │       ├── test_add_instance                   # add an Nginx instance
-    │       ├── test_instance_delete_accept         # delete the added Nginx instance
-    │       ├── test_add_new_group                  # add a "test-group" group
+    │       ├── test_delete_instance                # delete the added Nginx instance
+    │       ├── test_add_group                      # add a "test-group" group
     │       ├── test_edit_group                     # edit "test-group" group
     │       └── test_delete_group                   # delete "test-group" group
     └── ...
@@ -131,5 +131,5 @@ $ python3 main.py PortalBrowsing
 ```
 To run a specific test. For example, test_instance_delete_accept in FuncTests
 ```bash
-$ python3 main.py FuncTests.test_instance_delete_accept
+$ python3 main.py FuncTests.test_delete_instance
 ```

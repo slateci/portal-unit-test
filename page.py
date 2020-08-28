@@ -71,7 +71,7 @@ class AppsPage(BasePage):
         next_btn_id = 'apps-table_next'
         if tab_name == 'Incubator Applications':
             next_btn_id = 'incubator-apps-table_next'
-        WebDriverWait(self.driver, 20).until(
+        WebDriverWait(self.driver, 60).until(
             EC.presence_of_element_located((By.ID, next_btn_id))
         )
         
