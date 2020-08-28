@@ -248,14 +248,6 @@ class InstancesPage(BasePage):
 
     def get_next_button(self):
         return self.driver.find_element_by_id('instance-table_next')
-
-    def get_instance_link_2(self, instance_name):
-        instances_table = self.driver.find_element_by_id('instance-table')
-        try:
-            instance_link = instances_table.find_element_by_link_text(instance_name)
-            return instance_link
-        except:
-            return None
     
     def get_instance_link(self, instance_name):
         page_number = 1
@@ -278,6 +270,10 @@ class InstancesPage(BasePage):
 
 
 class InstanceProfilePage(BasePage):
+    def wait_until_page_loaded(self):
+        WebDriverWait(self.driver, 20).until(
+            EC.presence_of_element_located((By.ID, 'pods-table'))
+        )
     def get_instance_name(self):
         instance_name = self.driver.find_element_by_xpath("//div[@class='col-lg-12 mx-auto']/h2[1]")
         return instance_name.text.split()[-1]

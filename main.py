@@ -73,7 +73,7 @@ class PortalBrowsing(unittest.TestCase):
             if tab_name == 'Incubator Applications':
                 apps_page.click_incubator_apps_tab()
                 # here wait till table loaded
-                time.sleep(2)
+                # time.sleep(2)
 
             while click_next:
                 apps_page.wait_until_apps_table_loaded(tab_name)
@@ -204,33 +204,33 @@ class PortalBrowsing(unittest.TestCase):
 
     
     def segue_to_page(self, page_name):
-        dashboard_page = page.DashboardPage(self.driver)
-        assert dashboard_page.is_page_valid()
+        start_page = page.BasePage(self.driver)
+        assert start_page.is_page_valid()
         cur_page = None
         if page_name == 'clusters':
-            dashboard_page.go_to_clusters_page()
+            start_page.go_to_clusters_page()
             cur_page = page.ClustersPage(self.driver)
         elif page_name == 'applications':
-            dashboard_page.go_to_apps_page()
+            start_page.go_to_apps_page()
             cur_page = page.AppsPage(self.driver)
         elif page_name == 'instances':
-            dashboard_page.go_to_instances_page()
+            start_page.go_to_instances_page()
             cur_page = page.InstancesPage(self.driver)
         elif page_name == 'my_groups':
-            dashboard_page.go_to_my_groups_page()
+            start_page.go_to_my_groups_page()
             cur_page = page.MyGroupsPage(self.driver)
         elif page_name == 'all_groups':
-            dashboard_page.go_to_all_groups_page()
+            start_page.go_to_all_groups_page()
             cur_page = page.GroupsPage(self.driver)
         elif page_name == 'cli_access':
-            dashboard_page.go_to_cli_access_page()
+            start_page.go_to_cli_access_page()
             cur_page = page.CLIAccessPage(self.driver)
         assert cur_page.is_page_valid()
         return cur_page
 
     def tearDown(self):
         # self.driver.implicitly_wait(3)
-        time.sleep(3)
+        # time.sleep(3)
         self.driver.close()
 
 class FuncTests(unittest.TestCase):
@@ -246,8 +246,8 @@ class FuncTests(unittest.TestCase):
         # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
         # test with chrome, with headless()
         options = ChromeOptions()
-        # options.headless = True
-        options.headless = False
+        options.headless = True
+        # options.headless = False
         self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
 
         # portal on minislate
@@ -259,7 +259,7 @@ class FuncTests(unittest.TestCase):
     def segue_to_page(self, page_name):
         start_page = page.BasePage(self.driver)
         assert start_page.is_page_valid()
-        # cur_page = None
+        cur_page = None
         if page_name == 'clusters':
             start_page.go_to_clusters_page()
             cur_page = page.ClustersPage(self.driver)
@@ -280,7 +280,7 @@ class FuncTests(unittest.TestCase):
         print('test_add_instance')
         app_name = 'nginx'
         app_suffix = 'test-add'
-        self.add_instance(app_name, app_suffix=app_suffix)
+        instance_detail_page = self.add_instance(app_name, app_suffix=app_suffix)
     
 
     def add_instance(self, app_name, app_suffix=''):
@@ -316,6 +316,7 @@ class FuncTests(unittest.TestCase):
             # enter instance detail page; check instance name
             instance_detail_page = page.InstanceProfilePage(self.driver)
             assert instance_detail_page.is_page_valid()
+            instance_detail_page.wait_until_page_loaded()
 
             installed_app_name = instance_detail_page.get_app_name()
             assert installed_app_name == app_name
@@ -324,7 +325,7 @@ class FuncTests(unittest.TestCase):
             installed = True
         
         assert installed
-        print('Instance {} installed'.format(app_name))
+        print('Instance: {} installed'.format(app_name))
         return instance_detail_page
 
 
@@ -354,7 +355,7 @@ class FuncTests(unittest.TestCase):
         instance_detail_page.get_delete_button().click()
         try:
             alert = instance_detail_page.switch_to_alert_popup()
-            time.sleep(1)
+            # time.sleep(1)
             alert.accept()
             print('Alert pop up accepted')
         except:
@@ -449,7 +450,7 @@ class FuncTests(unittest.TestCase):
         group_profile_page.get_delete_group_btn().click()
         try:
             alert = group_profile_page.switch_to_alert_popup()
-            time.sleep(1)
+            # time.sleep(1)
             alert.accept()
             print('Alert pop up accepted')
         except:
@@ -462,7 +463,7 @@ class FuncTests(unittest.TestCase):
 
     def tearDown(self):
         # self.driver.implicitly_wait(3)
-        time.sleep(3)
+        # time.sleep(3)
         self.driver.close()
 
 if __name__ == '__main__':
