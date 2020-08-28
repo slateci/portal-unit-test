@@ -112,13 +112,25 @@ class AppsPage(BasePage):
         if not incubator_tab.is_selected():
             incubator_tab.click()
 
+    
     def get_app_link(self, app_name): # for app install
-        apps_table = self.driver.find_element_by_id('apps-table')
-        try:
-            app_link = apps_table.find_element_by_link_text(app_name)
-            return app_link
-        except:
-            return None
+        page_number = 1
+        click_next = True
+        while click_next:
+            self.wait_until_apps_table_loaded('Stable Applications')
+            apps_table = self.driver.find_element_by_id('apps-table')
+            try:
+                app_link = apps_table.find_element_by_link_text(app_name)
+                click_next = False
+                return app_link
+            except:
+                next_button = self.get_next_button('Stable Applications')
+                if next_button.get_attribute('class').split()[-1] == 'disabled':
+                    click_next = False
+                else:
+                    next_button.click()
+                    page_number += 1
+        return None
 
 
 class AppsDetailPage(BasePage):  
@@ -155,17 +167,14 @@ class AppCreateFinalPage(BasePage):
         conf_field = self.driver.find_element_by_id('config')
         # print(conf_field.text)
         config_arr = conf_field.text.split('\n')
-
         # add suffix to app name
         for idx, line in enumerate(config_arr):
             if 'Instance:' in line:
-                print(line)
                 config_arr[idx] = "Instance: {}".format(app_suffix)
-                break
-        
+                break      
         conf_field.clear()
         conf_field.send_keys('\n'.join(config_arr))
-        print('\n'.join(config_arr))
+        # print('\n'.join(config_arr))
 
     def click_install(self):
         self.driver.find_element(*AppCreateFinalPageLocators.INSTALL_BTN).click()
@@ -240,14 +249,42 @@ class InstancesPage(BasePage):
     def get_next_button(self):
         return self.driver.find_element_by_id('instance-table_next')
 
+    def get_instance_link_2(self, instance_name):
+        instances_table = self.driver.find_element_by_id('instance-table')
+        try:
+            instance_link = instances_table.find_element_by_link_text(instance_name)
+            return instance_link
+        except:
+            return None
+    
     def get_instance_link(self, instance_name):
-        pass
+        page_number = 1
+        click_next = True
+        while click_next:
+            self.wait_until_instances_table_loaded()
+            instances_table = self.driver.find_element_by_id('instance-table')
+            try:
+                instance_link = instances_table.find_element_by_link_text(instance_name)
+                click_next = False
+                return instance_link
+            except:
+                next_button = self.get_next_button()
+                if next_button.get_attribute('class').split()[-1] == 'disabled':
+                    click_next = False
+                else:
+                    next_button.click()
+                    page_number += 1
+        return None
 
 
 class InstanceProfilePage(BasePage):
     def get_instance_name(self):
         instance_name = self.driver.find_element_by_xpath("//div[@class='col-lg-12 mx-auto']/h2[1]")
         return instance_name.text.split()[-1]
+
+    def get_app_name(self):
+        app_name = self.driver.find_element_by_xpath("//div[@class='col-lg-12 mx-auto']/h6[2]")
+        return app_name.text.split()[-1]
 
     def get_cluster_name(self):
         cluster_name = self.driver.find_element_by_xpath("//div[@class='col-lg-12 mx-auto']/h6[4]")
@@ -276,7 +313,26 @@ class GroupsPage(BasePage):
         group_links = groups_table.find_elements_by_tag_name('a')
         return group_links
 
-    def get_group(self, group_name):
+    def get_group_link(self, group_name):
+        page_number = 1
+        click_next = True
+        while click_next:
+            self.wait_until_groups_table_loaded()
+            groups_table = self.driver.find_element_by_id('groups-table')
+            try:
+                group_link = groups_table.find_element_by_link_text(group_name)
+                click_next = False
+                return group_link
+            except:
+                next_button = self.get_next_button()
+                if next_button.get_attribute('class').split()[-1] == 'disabled':
+                    click_next = False
+                else:
+                    next_button.click()
+                    page_number += 1
+        return None
+
+    def get_group_link_2(self, group_name):
         groups_table = self.driver.find_element_by_id('groups-table')
         group = groups_table.find_element_by_link_text(group_name)
         return group
@@ -331,13 +387,35 @@ class CreateNewGroupPage(BasePage):
 class GroupProfilePage(BasePage):
     def wait_until_page_loaded(self):
         WebDriverWait(self.driver, 20).until(
-            EC.presence_of_element_located((By.ID, 'group-info')))
-        
+            EC.presence_of_element_located((By.ID, 'accessible-clusters-table_next')))
+    
+    def get_group_name(self):
+        # info = self.driver.find_element_by_id('group-info')
+        # group_name = info.find_element_by_xpath("//h2[1]")
+        group_name = self.driver.find_element_by_xpath("//div[@id='group-info']/span[1]/h2[1]")
+        return group_name.text.split()[-1]
+    
+    def get_description(self):
+        description = self.driver.find_element_by_xpath("//div[@id='group-info']/span[1]/p[1]")
+        return description.text
+
+    def get_field_of_science(self):
+        field_of_science = self.driver.find_element_by_xpath("//div[@id='group-info']/span[1]/p[2]")
+        return field_of_science.text.split()[-1]
+
+    def get_email(self):
+        email = self.driver.find_element_by_xpath("//div[@id='group-info']/span[1]/p[3]")
+        return email.text.split()[-1]
+
+    def get_phone_number(self):
+        phone_number = self.driver.find_element_by_xpath("//div[@id='group-info']/span[1]/p[4]")
+        return phone_number.text.split()[-1]
+
     def get_edit_btn(self):
         return self.driver.find_element_by_link_text('Edit Info') 
 
     def get_delete_group_btn(self):
-        return self.driver.find_element_by_xpath("//form[@action='/groups/test-group/delete']")
+        return self.driver.find_element_by_xpath("//div[@aria-label='second group']/form[1]")
 
     def switch_to_alert_popup(self):
         return self.driver.switch_to.alert
