@@ -22,8 +22,8 @@ class PortalBrowsing(unittest.TestCase):
         # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
         # test with chrome, with headless()
         options = ChromeOptions()
-        # options.headless = True
-        options.headless = False
+        options.headless = True
+        # options.headless = False
         self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
 
         # portal on minislate
