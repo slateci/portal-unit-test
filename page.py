@@ -471,16 +471,12 @@ class GroupProfilePage(BasePage):
             return None
 
     def get_secret_link_delete_btn(self, group_name, secret_field):
-        # content_field = secret_field + '-contents'
-        # WebDriverWait(self.driver, 20).until(
-        #     EC.visibility_of_element_located((By.ID, content_field))
-        #     )
+        content_field = secret_field + '-contents'
+        WebDriverWait(self.driver, 20).until(
+            EC.visibility_of_element_located((By.ID, content_field))
+            )
         
-        created_secret_field = self.driver.find_element_by_id(secret_field)
-
-        delete_btn = created_secret_field.find_element_by_xpath("//form[@role='form'][@action='/groups/{}/secrets']".format(group_name))
-        # delete_btn = created_secret_field.find_elements_by_tag_name('button')
-        return delete_btn
+        return self.driver.find_element_by_xpath("//div[@id='{}']/div[1]/form[1]/button[1]".format(secret_field))
 
 
 

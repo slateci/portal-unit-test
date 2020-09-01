@@ -133,3 +133,14 @@ To run a specific test. For example, test_instance_delete_accept in FuncTests
 ```bash
 $ python3 main.py FuncTests.test_delete_instance
 ```
+
+## Troubleshooting
+* `Delete` button not clickable with `click()`: 
+    1. There are a few cases in the test where we need to delete a component of the MiniSLATE cluster, such as delete an instance, delete a group and delete a secret.
+    2. Interacting with the `Delete` button with invoke a confirmation popup box. During the development, using the `click()` function from Selenium on the `Delete` buttons instead of the `submit()` function is a good way to avoid unexpected errors.
+    3. For example, in the Groups Profile page(`groups_profile_template.html` and `groups_profile_secrets.html`), both the `Delete Group` and `Delete Secret` buttons are embeded inside the `<form>` tag in the html. To identify the buttons from the `html`, I used the `find_element_by_xpath()` function from Selenium.
+    4. For the `Delete Group` button, I used `.find_element_by_xpath("//div[@aria-label='second group']/form[1]")` to get the button, it was working as expected with the `click()`
+    5. However, when I tried the same thing to get the `Delete Secret` button, the return `<form>` element cannot be interacted with `click()`. It can only be interacted with `submit()`, which caused a problem because the popup confirmation alert that the `submit()` function invokes will lead to a error page when Selenium tries to `.alert.accept()` the confirmation
+    6. A fix to this is to modified the xpath a level deeper passing the `<form>` tag to find the `Delete Secret` button, i.e. `.find_element_by_xpath("//div[@id='{}']/div[1]/form[1]/button[1]".format(secret_field))`. This will return the element as a button so that `click()` can function normally
+
+

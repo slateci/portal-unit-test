@@ -451,8 +451,8 @@ class FuncTests(unittest.TestCase):
         try:
             alert = group_profile_page.switch_to_alert_popup()
             # time.sleep(1)
-            # alert.accept()
-            alert.dismiss()
+            alert.accept()
+            # alert.dismiss()
             print('Alert pop up accepted')
         except:
             print('Error occur at confirming group delete')
@@ -505,7 +505,9 @@ class FuncTests(unittest.TestCase):
         key_name = 'test-delete-key-name'
         key_contents = 'test-delete-key-contents'
 
+        print('adding secret {} for delete secret test'.format(secret_name))
         self.add_secret(cluster_name, secret_name, key_name, key_contents)
+
         created_secret = '{}: {}'.format(cluster_name, secret_name)
         group_profile_page = page.GroupProfilePage(self.driver)
         assert group_profile_page.is_page_valid()
@@ -513,31 +515,26 @@ class FuncTests(unittest.TestCase):
         created_secret_link = group_profile_page.get_secret_link(created_secret)
         assert created_secret == created_secret_link.text
         created_secret_link.click() # expand the secret_content_field
-
         # find the delete button and click()
         secret_field = '{}-{}'.format(cluster_name, secret_name) # 'my-cluster-test-delete-secret'
-        secret_delete_btn = group_profile_page.get_secret_link_delete_btn(group_name, secret_field)
-        # print('test1', secret_delete_btn[0].text)
-        secret_delete_btn.submit()
+        group_profile_page.get_secret_link_delete_btn(group_name, secret_field).click()
 
         try:
             print('before moving to alert')
             alert = group_profile_page.switch_to_alert_popup()
-            # time.sleep(1)
             alert.accept()
-            # alert.dimiss()
             print('Alert pop up accepted')
         except:
             print('Error occur at confirming secret delete')
 
         # confirm deletion
-        # created_secret_link = group_profile_page.get_secret_link(created_secret)
-        # assert not created_secret_link
+        created_secret_link = group_profile_page.get_secret_link(created_secret)
+        assert not created_secret_link
     
 
     def tearDown(self):
         # self.driver.implicitly_wait(3)
-        time.sleep(15)
+        time.sleep(3)
         self.driver.close()
 
 if __name__ == '__main__':
