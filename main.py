@@ -237,18 +237,18 @@ class FuncTests(unittest.TestCase):
         # test with Firefox, without headless()
         # self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver')
         # test with Firefox, with headless()
-        options = FirefoxOptions()
+        # options = FirefoxOptions()
         # options.headless = True
-        options.headless = False
-        self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver', options=options)
+        # options.headless = False
+        # self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver', options=options)
 
         # test with chrome, without headless()
         # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
         # test with chrome, with headless()
-        # options = ChromeOptions()
+        options = ChromeOptions()
         # options.headless = True
-        # options.headless = False
-        # self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
+        options.headless = False
+        self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
 
         # portal on minislate
         self.driver.get('http://localhost:5000/slate_portal')
@@ -521,10 +521,11 @@ class FuncTests(unittest.TestCase):
         secret_delete_btn.submit()
 
         try:
+            print('before moving to alert')
             alert = group_profile_page.switch_to_alert_popup()
             # time.sleep(1)
-            # alert.accept()
-            alert.dimiss()
+            alert.accept()
+            # alert.dimiss()
             print('Alert pop up accepted')
         except:
             print('Error occur at confirming secret delete')
