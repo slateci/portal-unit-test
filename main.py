@@ -237,17 +237,18 @@ class FuncTests(unittest.TestCase):
         # test with Firefox, without headless()
         # self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver')
         # test with Firefox, with headless()
-        # options = FirefoxOptions()
+        options = FirefoxOptions()
         # options.headless = True
-        # self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver', options=options)
+        options.headless = False
+        self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver', options=options)
 
         # test with chrome, without headless()
         # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
         # test with chrome, with headless()
-        options = ChromeOptions()
-        options.headless = True
+        # options = ChromeOptions()
+        # options.headless = True
         # options.headless = False
-        self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
+        # self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
 
         # portal on minislate
         self.driver.get('http://localhost:5000/slate_portal')
@@ -450,23 +451,92 @@ class FuncTests(unittest.TestCase):
         try:
             alert = group_profile_page.switch_to_alert_popup()
             # time.sleep(1)
-            alert.accept()
+            # alert.accept()
+            alert.dismiss()
             print('Alert pop up accepted')
         except:
-            print('Error occur at confirming instance delete')
+            print('Error occur at confirming group delete')
         
         # confirm group deleted
         group_link = my_groups_page.get_group_link(group_name)
         assert not group_link
 
     
-    def add_secret(self):
-        pass
+    def add_secret(self, cluster_name, secret_name, key_name, key_contents):
+        group_name = 'my-group'
+        my_groups_page = self.segue_to_page('my_groups')
+        my_groups_page.wait_until_groups_table_loaded()
+
+        group_link = my_groups_page.get_group_link(group_name)
+        group_link.click()
+
+        group_profile_page = page.GroupProfilePage(self.driver)
+        assert group_profile_page.is_page_valid()
+        group_profile_page.wait_until_page_loaded
+
+        group_profile_page.get_secrets_tab().click()
+        group_profile_page.get_new_secret_btn().submit()
+
+        secrets_create_page = page.SecretsCreatePage(self.driver)
+        secrets_create_page.fill_form_and_submit(cluster_name, secret_name, key_name, key_contents)
+
+
+    def test_add_secret(self):
+        cluster_name = 'my-cluster'
+        secret_name = 'test-secret'
+        key_name = 'test-key-name'
+        key_contents = 'test-key-contents'
+        self.add_secret(cluster_name, secret_name, key_name, key_contents)
+
+        created_secret = '{}: {}'.format(cluster_name, secret_name)
+        group_profile_page = page.GroupProfilePage(self.driver)
+        assert group_profile_page.is_page_valid()
+
+        created_secret_link = group_profile_page.get_secret_link(created_secret)
+        assert created_secret == created_secret_link.text
+        created_secret_link.click()
+
+    
+    def test_delete_secret(self):
+        # first create secret for delete
+        group_name = 'my-group'
+        cluster_name = 'my-cluster'
+        secret_name = 'test-delete-secret'
+        key_name = 'test-delete-key-name'
+        key_contents = 'test-delete-key-contents'
+
+        self.add_secret(cluster_name, secret_name, key_name, key_contents)
+        created_secret = '{}: {}'.format(cluster_name, secret_name)
+        group_profile_page = page.GroupProfilePage(self.driver)
+        assert group_profile_page.is_page_valid()
+
+        created_secret_link = group_profile_page.get_secret_link(created_secret)
+        assert created_secret == created_secret_link.text
+        created_secret_link.click() # expand the secret_content_field
+
+        # find the delete button and click()
+        secret_field = '{}-{}'.format(cluster_name, secret_name) # 'my-cluster-test-delete-secret'
+        secret_delete_btn = group_profile_page.get_secret_link_delete_btn(group_name, secret_field)
+        # print('test1', secret_delete_btn[0].text)
+        secret_delete_btn.submit()
+
+        try:
+            alert = group_profile_page.switch_to_alert_popup()
+            # time.sleep(1)
+            # alert.accept()
+            alert.dimiss()
+            print('Alert pop up accepted')
+        except:
+            print('Error occur at confirming secret delete')
+
+        # confirm deletion
+        # created_secret_link = group_profile_page.get_secret_link(created_secret)
+        # assert not created_secret_link
     
 
     def tearDown(self):
         # self.driver.implicitly_wait(3)
-        # time.sleep(3)
+        time.sleep(15)
         self.driver.close()
 
 if __name__ == '__main__':

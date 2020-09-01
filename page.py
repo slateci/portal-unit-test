@@ -226,6 +226,43 @@ class SecretsPage(BasePage):
 class SecretGroupPage(BasePage):
     pass
 
+class SecretsCreatePage(BasePage):
+    # use implicit wait instead
+    # def wait_until_form_loaded(self):
+    #     WebDriverWait(self.driver, 20).until(
+    #         EC.presence_of_element_located((By.LINK_TEXT, 'Add Secret'))
+    #     )
+
+    def select_cluster(self, cluster_name):
+        cluster_field = self.driver.find_element_by_id('cluster')
+        cluster_field.send_keys(cluster_name)
+    
+    def fill_secret_name(self, secret_name):
+        secret_name_field = self.driver.find_element_by_id('secret_name')
+        secret_name_field.send_keys(secret_name)
+
+    def fill_key_name(self, key_name):
+        key_name_field = self.driver.find_element_by_id('key_name')
+        key_name_field.send_keys(key_name)
+
+    def fill_key_contents(self, key_contents):
+        key_contents_field = self.driver.find_element_by_id('key_contents')
+        key_contents_field.send_keys(key_contents)
+
+    def get_add_key_contents_btn(self):
+        pass
+
+    def get_add_secret_btn(self):
+        return self.driver.find_element_by_xpath("//button[@type='submit'][@class='btn btn-primary']")
+    
+    def fill_form_and_submit(self, cluster_name, secret_name, key_name, key_contents):
+        self.driver.implicitly_wait(5)
+        self.select_cluster(cluster_name)
+        self.fill_secret_name(secret_name)
+        self.fill_key_name(key_name)
+        self.fill_key_contents(key_contents)
+        self.get_add_secret_btn().click()
+
 
 class InstancesPage(BasePage):
     def wait_until_instances_table_loaded(self):
@@ -386,8 +423,6 @@ class GroupProfilePage(BasePage):
             EC.presence_of_element_located((By.ID, 'accessible-clusters-table_next')))
     
     def get_group_name(self):
-        # info = self.driver.find_element_by_id('group-info')
-        # group_name = info.find_element_by_xpath("//h2[1]")
         group_name = self.driver.find_element_by_xpath("//div[@id='group-info']/span[1]/h2[1]")
         return group_name.text.split()[-1]
     
@@ -415,6 +450,38 @@ class GroupProfilePage(BasePage):
 
     def switch_to_alert_popup(self):
         return self.driver.switch_to.alert
+    
+    def get_secrets_tab(self):
+        return self.driver.find_element_by_id('secrets_tab')
+
+    def get_new_secret_btn(self):
+        new_secret_btn = WebDriverWait(self.driver, 20).until(
+            EC.presence_of_element_located((By.XPATH, "//form[@role='form'][@action='/groups/my-group/new_secret']"))
+            )
+        return new_secret_btn
+
+    def get_secret_link(self, created_secret):
+        WebDriverWait(self.driver, 20).until(
+            EC.presence_of_element_located((By.ID, 'secrets-vue'))
+            )
+        try:
+            link = self.driver.find_element_by_link_text(created_secret)
+            return link
+        except:
+            return None
+
+    def get_secret_link_delete_btn(self, group_name, secret_field):
+        # content_field = secret_field + '-contents'
+        # WebDriverWait(self.driver, 20).until(
+        #     EC.visibility_of_element_located((By.ID, content_field))
+        #     )
+        
+        created_secret_field = self.driver.find_element_by_id(secret_field)
+
+        delete_btn = created_secret_field.find_element_by_xpath("//form[@role='form'][@action='/groups/{}/secrets']".format(group_name))
+        # delete_btn = created_secret_field.find_elements_by_tag_name('button')
+        return delete_btn
+
 
 
 class GroupEditPage(BasePage):
