@@ -316,11 +316,54 @@ class FuncTests(unittest.TestCase):
         app_name = 'nginx'
         app_suffix = 'test-add'
         instance_detail_page = self.add_instance(app_name, app_suffix=app_suffix)
+
+    
+    def test_add_instance_wrong_input(self):
+        print('test add instance with wrong input')
+        app_name = 'nginx'
+        app_suffix = 'test-add-with-wrong-input'
+        apps_page = self.segue_to_page('applications')
+        
+        apps_page.wait_until_apps_table_loaded('Stable Applications')
+        app_link = apps_page.get_app_link(app_name)
+
+        if app_link:
+            print('installing', app_link.text)
+            app_link.click()
+            app_detail_page = page.AppsDetailPage(self.driver)
+            assert app_detail_page.is_page_valid()
+            app_detail_page.wait_until_ready_for_install()
+            app_detail_page.click_intall_app()
+
+            # test missing group name
+            app_create_page = page.AppCreatePage(self.driver)
+            assert app_create_page.is_page_valid()
+            app_create_page.fill_group(group_name='')
+            app_create_page.click_next()
+            
+            group_field = app_create_page.get_group_field()
+            message = group_field.get_attribute('validationMessage')
+            assert message == 'Please select an item in the list.'
+
+            # select a valid group and proceed to next page
+            app_create_page.fill_group()
+            app_create_page.click_next()
+
+            # test missing cluster name
+            app_create_final_page = page.AppCreateFinalPage(self.driver)
+            assert app_create_final_page.is_page_valid()
+            app_create_final_page.fill_cluster(cluster_name='')
+            app_create_final_page.fill_configuration(app_suffix)
+            app_create_final_page.click_install()
+
+            cluster_field = app_create_final_page.get_cluster_field()
+            message = cluster_field.get_attribute('validationMessage')
+            assert message == 'Please select an item in the list.'
+
     
 
     def add_instance(self, app_name, app_suffix=''):
         apps_page = self.segue_to_page('applications')
-        # app_to_install = 'nginx'
         installed = False
         # find the app
         
@@ -458,6 +501,61 @@ class FuncTests(unittest.TestCase):
         science_field = create_new_group_page.get_field_of_science()
         message = science_field.get_attribute('validationMessage')
         assert message == 'Please select an item in the list.'
+    
+
+    def test_edit_group_wrong_input(self):
+        print('test editing new group with wrong inputs')
+        # add group for edit with wrong input
+        group_name = 'test-edit-group-wrong-input'
+        print('adding group {} for edit group test'.format(group_name))
+        self.add_group(group_name=group_name)
+        # edit with wrong input
+        print('test_edit_group_with_wrong_input')
+        my_groups_page = self.segue_to_page('my_groups')
+        my_groups_page.wait_until_groups_table_loaded()
+
+        group_link = my_groups_page.get_group_link(group_name)
+        group_link.click()
+
+        group_profile_page = page.GroupProfilePage(self.driver)
+        assert group_profile_page.is_page_valid()
+        group_profile_page.wait_until_page_loaded()
+        group_profile_page.get_edit_btn().click()
+
+        group_edit_page = page.GroupEditPage(self.driver)
+        assert group_edit_page.is_page_valid()
+        group_edit_page.wait_until_form_loaded()
+
+        # test invalid email input
+        invalid_email = 'selenium-testslateci.io'
+        self.edit_group_on_edit_page(group_edit_page, email=invalid_email)
+        email_field = group_edit_page.get_email_field()
+        message = email_field.get_attribute('validationMessage')
+        assert message == "Please include an '@' in the email address. '{}' is missing an '@'.".format(invalid_email)
+
+        # test missing phone number
+        missing_phone_number = ''
+        self.edit_group_on_edit_page(group_edit_page, phone_number=missing_phone_number)
+        phone_number_field = group_edit_page.get_phone_number_field()
+        message = phone_number_field.get_attribute('validationMessage')
+        assert message == 'Please fill out this field.'
+
+        # # test empty field of science
+        # empty_field_of_science = ''
+        # self.edit_group_on_edit_page(group_edit_page, field_of_science=empty_field_of_science)
+        # science_field = group_edit_page.get_science_field()
+        # message = science_field.get_attribute('validationMessage')
+        # print(message)
+        
+
+    def edit_group_on_edit_page(self, group_edit_page, email='selenium-test@slateci.io', phone_number='777-7777', field_of_science='Physics', description='Testing group edit functionality'):
+        group_edit_page.update_email(email)
+        group_edit_page.update_phone_number(phone_number)
+        group_edit_page.update_field_of_science(field_of_science)
+        group_edit_page.update_description(description)
+        # click update
+        group_edit_page.update_group()
+
 
 
     def test_edit_group(self):
@@ -475,7 +573,7 @@ class FuncTests(unittest.TestCase):
 
         group_profile_page = page.GroupProfilePage(self.driver)
         assert group_profile_page.is_page_valid()
-        group_profile_page.wait_until_page_loaded
+        group_profile_page.wait_until_page_loaded()
         group_profile_page.get_edit_btn().click()
 
         group_edit_page = page.GroupEditPage(self.driver)
@@ -486,15 +584,9 @@ class FuncTests(unittest.TestCase):
         new_phone_number = '777-7777'
         new_field_of_science = 'Physics'
         new_description = 'Testing group edit functionality'
+        self.edit_group_on_edit_page(group_edit_page, email=new_email, phone_number=new_phone_number, field_of_science=new_field_of_science, description=new_description)
 
-        group_edit_page.update_email(new_email)
-        group_edit_page.update_phone_number(new_phone_number)
-        group_edit_page.update_field_of_science(new_field_of_science)
-        group_edit_page.update_description(new_description)
-        # click update
-        group_edit_page.update_group()
-
-        # here should add assert to confirm group info updated
+        # confirm group info updated
         group_profile_page.wait_until_page_loaded()
         assert group_profile_page.is_page_valid()
         assert group_profile_page.get_field_of_science() == new_field_of_science

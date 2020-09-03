@@ -144,24 +144,30 @@ class AppsDetailPage(BasePage):
 
 
 class AppCreatePage(BasePage):
-    def fill_group(self):
+    def fill_group(self, group_name='my-group'):
         WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//select[@id='group']/option[@value='my-group']"))
+            EC.presence_of_element_located((By.XPATH, "//select[@id='group']/option[@value='{}']".format(group_name)))
         )
         select = Select(self.driver.find_element_by_id('group'))
-        select.select_by_value('my-group')
+        select.select_by_value(group_name)
+    
+    def get_group_field(self):
+        return self.driver.find_element_by_id('group')
     
     def click_next(self):
         self.driver.find_element(*AppCreatePageLocators.NEXT_BTN).click()
 
 
 class AppCreateFinalPage(BasePage):
-    def fill_cluster(self):
+    def fill_cluster(self, cluster_name='my-cluster'):
         WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, "//select[@id='cluster']/option[@value='my-cluster']"))
+            EC.presence_of_element_located((By.XPATH, "//select[@id='cluster']/option[@value='{}']".format(cluster_name)))
         )
         select = Select(self.driver.find_element_by_id('cluster'))
-        select.select_by_value('my-cluster')
+        select.select_by_value(cluster_name)
+    
+    def get_cluster_field(self):
+        return self.driver.find_element_by_id('cluster')
 
     def fill_configuration(self, app_suffix=''):
         conf_field = self.driver.find_element_by_id('config')
@@ -519,16 +525,25 @@ class GroupEditPage(BasePage):
         WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.ID, 'cli-access')))
     
+    def get_email_field(self):
+        return self.driver.find_element_by_id('email')
+    
     def update_email(self, email):
         email_field = self.driver.find_element_by_id('email')
         email_field.clear()
         email_field.send_keys(email)
 
+    def get_phone_number_field(self):
+        return self.driver.find_element_by_id('phone-number')
+    
     def update_phone_number(self, phone_number):
         phone_number_field = self.driver.find_element_by_id('phone-number')
         phone_number_field.clear()
         phone_number_field.send_keys(phone_number)
     
+    def get_science_field(self):
+        return self.driver.find_element_by_id('field-of-science')
+
     def update_field_of_science(self, field_of_science):
         field_sc = self.driver.find_element_by_id('field-of-science')
         field_sc.send_keys(field_of_science)
