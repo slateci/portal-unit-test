@@ -22,8 +22,8 @@ class PortalBrowsing(unittest.TestCase):
         # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
         # test with chrome, with headless()
         options = ChromeOptions()
-        options.headless = True
-        # options.headless = False
+        # options.headless = True
+        options.headless = False
         self.driver = Chrome(executable_path='/opt/WebDriver/bin/chromedriver', options=options)
 
         # portal on minislate
@@ -138,6 +138,38 @@ class PortalBrowsing(unittest.TestCase):
                 page_number += 1
 
 
+    def test_iterate_secrets_pages(self):
+        secrets_page = self.segue_to_page('secrets')
+        page_number = 1
+        click_next = True
+        
+        while click_next:
+            secrets_page.wait_until_secrets_table_loaded()
+            secrets_links = secrets_page.get_secret_links_on_cur_page()
+            num_of_links = len(secrets_links)
+            print(num_of_links)
+            print('page number', page_number)
+
+            for i in range(num_of_links):
+                print('Testing secrete page:', secrets_links[i].text)
+                secrets_links[i].click()
+                group_profile_page = page.GroupProfilePage(self.driver)
+                assert group_profile_page.is_page_valid()
+                self.driver.back()
+
+                secrets_page.wait_until_secrets_table_loaded()
+                secrets_page.click_cur_page(page_number)
+                secrets_page.wait_until_secrets_table_loaded()
+                secrets_links = secrets_page.get_secret_links_on_cur_page()
+            
+            next_button = secrets_page.get_next_button()
+            if next_button.get_attribute('class').split()[-1] == 'disabled':
+                click_next = False
+            else:
+                next_button.click()
+                page_number += 1
+
+
     def test_iterate_my_groups_pages(self):
         my_groups_page = self.segue_to_page('my_groups')
         page_number = 1
@@ -212,6 +244,9 @@ class PortalBrowsing(unittest.TestCase):
         elif page_name == 'applications':
             start_page.go_to_apps_page()
             cur_page = page.AppsPage(self.driver)
+        elif page_name == 'secrets':
+            start_page.go_to_secrets_page()
+            cur_page = page.SecretsPage(self.driver)
         elif page_name == 'instances':
             start_page.go_to_instances_page()
             cur_page = page.InstancesPage(self.driver)
@@ -229,7 +264,7 @@ class PortalBrowsing(unittest.TestCase):
 
     def tearDown(self):
         # self.driver.implicitly_wait(3)
-        # time.sleep(3)
+        time.sleep(3)
         self.driver.close()
 
 class FuncTests(unittest.TestCase):
@@ -368,31 +403,68 @@ class FuncTests(unittest.TestCase):
         print('Instance {} successfully deleted'.format(instance_name))
 
 
-    def add_group(self, group_name, field_of_science):
+    def add_group(self, group_name='valid-name', phone_number='555-5555', email='slate@slateci.io', field_of_science='Biology'):
         my_groups_page = self.segue_to_page('my_groups')
         my_groups_page.get_register_new_group_btn().click()
         create_new_group = page.CreateNewGroupPage(self.driver)
+        # create_new_group.wait_until_form_loaded()
+
         create_new_group.fill_group_name(group_name)
+        create_new_group.fill_phone_number(phone_number)
+        create_new_group.fill_email(email)
         create_new_group.fill_field_of_science(field_of_science)
         create_new_group.create_group()
         
-        group_profile_page = page.GroupProfilePage(self.driver)
-        assert group_profile_page.is_page_valid()
-
+        cur_page = page.BasePage(self.driver)
+        assert cur_page.is_page_valid()
+    
 
     def test_add_group(self):
-        print('test_add_new_group')
+        print('test add new group')
         group_name = 'test-add-group'
-        field_of_science = 'Biology'
-        self.add_group(group_name, field_of_science)
+        self.add_group(group_name=group_name)
+    
+    
+    def test_add_group_wrong_input(self):
+        print('test adding new group with wrong inputs')
+        # test invalid group name
+        invalid_group_name = 'valid@name'
+        self.add_group(group_name=invalid_group_name)
+        create_new_group_page = page.CreateNewGroupPage(self.driver)
+        group_name_field = create_new_group_page.get_group_name_field()
+        message = group_name_field.get_attribute('validationMessage')
+        assert message == 'Please match the requested format.'
+
+        # test empty phone number field
+        empty_phone_number = ''
+        self.add_group(phone_number=empty_phone_number)
+        create_new_group_page = page.CreateNewGroupPage(self.driver)
+        phone_number_field = create_new_group_page.get_phone_number_field()
+        message = phone_number_field.get_attribute('validationMessage')
+        assert message == 'Please fill out this field.'
+
+        # test invalid email (without '@')
+        invalid_email = 'slate-slateci.io'
+        self.add_group(email=invalid_email)
+        create_new_group_page = page.CreateNewGroupPage(self.driver)
+        email_field = create_new_group_page.get_email_field()
+        message = email_field.get_attribute('validationMessage')
+        assert message == "Please include an '@' in the email address. '{}' is missing an '@'.".format(invalid_email)
+
+        # test empty field of science
+        empty_field_of_science = ''
+        self.add_group(field_of_science=empty_field_of_science)
+        create_new_group_page = page.CreateNewGroupPage(self.driver)
+        science_field = create_new_group_page.get_field_of_science()
+        message = science_field.get_attribute('validationMessage')
+        assert message == 'Please select an item in the list.'
 
 
     def test_edit_group(self):
         # add group for edit
         group_name = 'test-edit-group'
-        field_of_science = 'Biology'
         print('adding group {} for edit group test'.format(group_name))
-        self.add_group(group_name, field_of_science)
+        self.add_group(group_name=group_name)
         # edit group
         print('test_edit_group')
         my_groups_page = self.segue_to_page('my_groups')
@@ -433,9 +505,8 @@ class FuncTests(unittest.TestCase):
     def test_delete_group(self):
         # add group for delete
         group_name = 'test-delete-group'
-        field_of_science = 'Biology'
         print('adding group {} for delete group test'.format(group_name))
-        self.add_group(group_name, field_of_science)
+        self.add_group(group_name=group_name)
         # delete group
         print('test_delete_group')
         my_groups_page = self.segue_to_page('my_groups')
@@ -462,7 +533,7 @@ class FuncTests(unittest.TestCase):
         assert not group_link
 
     
-    def add_secret(self, cluster_name, secret_name, key_name, key_contents):
+    def add_secret(self, cluster_name='my-cluster', secret_name='valid-secret-name', key_name='valid-key-name', key_contents='valid-key-contents'):
         group_name = 'my-group'
         my_groups_page = self.segue_to_page('my_groups')
         my_groups_page.wait_until_groups_table_loaded()
@@ -486,7 +557,7 @@ class FuncTests(unittest.TestCase):
         secret_name = 'test-secret'
         key_name = 'test-key-name'
         key_contents = 'test-key-contents'
-        self.add_secret(cluster_name, secret_name, key_name, key_contents)
+        self.add_secret(cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
 
         created_secret = '{}: {}'.format(cluster_name, secret_name)
         group_profile_page = page.GroupProfilePage(self.driver)
@@ -497,6 +568,45 @@ class FuncTests(unittest.TestCase):
         created_secret_link.click()
 
     
+    def test_add_secret_wrong_input(self):
+        print('test adding new secret with wrong inputs')
+        # test cluster not selected
+        cluster_not_selected = ''
+        self.add_secret(cluster_name=cluster_not_selected)
+        secrets_create_page = page.SecretsCreatePage(self.driver)
+        cluster_field = secrets_create_page.get_cluster_field()
+        message = cluster_field.get_attribute('validationMessage')
+        assert message == 'Please select an item in the list.'
+        
+        # test space in invalid secret name removed
+        invalid_secret_name = 'secret name with spaces'
+        secret_name_after_send = invalid_secret_name.replace(' ', '')
+        secrets_create_page.fill_secret_name(invalid_secret_name)
+        secert_name_field = secrets_create_page.get_secret_name_field()
+        filled_secret_name = secert_name_field.get_attribute('value')
+        assert filled_secret_name == secret_name_after_send
+
+        # test space in invalid key name removed
+        invalid_key_name = 'key name with spaces'
+        key_name_after_send = invalid_key_name.replace(' ', '')
+        secrets_create_page.fill_key_name(invalid_key_name)
+        key_name_field = secrets_create_page.get_key_name_field()
+        filled_key_name = key_name_field.get_attribute('value')
+        assert filled_key_name == key_name_after_send
+
+
+    def add_mul_secrets(self, num_of_secrets):
+        cluster_name = 'my-cluster'
+        secret_prefix = 'test-secret'
+        key_name_prefix = 'test-key-name'
+        key_contents_prefix = 'test-key-contents'
+        for i in range(num_of_secrets):
+            secret_name = secret_prefix + '-' + str(i)
+            key_name = key_name_prefix + '-' + str(i)
+            key_contents = key_contents_prefix + '-' + str(i)
+            print(secret_name, key_name, key_contents)
+            self.add_secret(cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
+    
     def test_delete_secret(self):
         # first create secret for delete
         group_name = 'my-group'
@@ -506,7 +616,7 @@ class FuncTests(unittest.TestCase):
         key_contents = 'test-delete-key-contents'
 
         print('adding secret {} for delete secret test'.format(secret_name))
-        self.add_secret(cluster_name, secret_name, key_name, key_contents)
+        self.add_secret(cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
 
         created_secret = '{}: {}'.format(cluster_name, secret_name)
         group_profile_page = page.GroupProfilePage(self.driver)
@@ -534,7 +644,7 @@ class FuncTests(unittest.TestCase):
 
     def tearDown(self):
         # self.driver.implicitly_wait(3)
-        time.sleep(3)
+        time.sleep(7)
         self.driver.close()
 
 if __name__ == '__main__':

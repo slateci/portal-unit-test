@@ -214,13 +214,19 @@ class SecretsPage(BasePage):
         )
 
     def get_secret_links_on_cur_page(self):
-        pass
+        secrets_links = self.driver.find_elements_by_xpath("//td[@class='sorting_1']/a[1]")
+        return secrets_links
 
     def click_cur_page(self, page_number):
-        pass
+        pages = self.driver.find_element_by_id('secrets-table_paginate')
+        page_to_click = WebDriverWait(pages, 20).until(
+            EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
+        )
+        if not page_to_click.is_selected():
+            page_to_click.click()
 
     def get_next_button(self):
-        pass
+        return self.driver.find_element_by_id('secrets-table_next')
 
 
 class SecretGroupPage(BasePage):
@@ -233,20 +239,32 @@ class SecretsCreatePage(BasePage):
     #         EC.presence_of_element_located((By.LINK_TEXT, 'Add Secret'))
     #     )
 
+    def get_cluster_field(self):
+        return self.driver.find_element_by_id('cluster')
+
     def select_cluster(self, cluster_name):
         cluster_field = self.driver.find_element_by_id('cluster')
         cluster_field.send_keys(cluster_name)
     
+    def get_secret_name_field(self):
+        return self.driver.find_element_by_id('secret_name')
+
     def fill_secret_name(self, secret_name):
         secret_name_field = self.driver.find_element_by_id('secret_name')
+        secret_name_field.clear()
         secret_name_field.send_keys(secret_name)
+
+    def get_key_name_field(self):
+        return self.driver.find_element_by_id('key_name')
 
     def fill_key_name(self, key_name):
         key_name_field = self.driver.find_element_by_id('key_name')
+        key_name_field.clear()
         key_name_field.send_keys(key_name)
 
     def fill_key_contents(self, key_contents):
         key_contents_field = self.driver.find_element_by_id('key_contents')
+        key_contents_field.clear()
         key_contents_field.send_keys(key_contents)
 
     def get_add_key_contents_btn(self):
@@ -392,17 +410,33 @@ class CreateNewGroupPage(BasePage):
         WebDriverWait(self.driver, 20).until(
             EC.presence_of_element_located((By.ID, 'cli-access')))
 
+    def get_group_name_field(self):
+        return self.driver.find_element_by_id('name')
+
     def fill_group_name(self, group_name):
         group_name_field = self.driver.find_element_by_id('name')
+        group_name_field.clear()
         group_name_field.send_keys(group_name)
     
+    def get_phone_number_field(self):
+        return self.driver.find_element_by_id('phone-number')
+
     def fill_phone_number(self, phone_number):
         phone_number_field = self.driver.find_element_by_id('phone-number')
+        phone_number_field.clear()
         phone_number_field.send_keys(phone_number)
+    
+    def get_email_field(self):
+        return self.driver.find_element_by_id('email')
     
     def fill_email(self, email):
         email_field = self.driver.find_element_by_id('email')
+        email_field.clear()
         email_field.send_keys(email)
+
+    def get_field_of_science(self):
+        return self.driver.find_element_by_id('field-of-science')
+
 
     def fill_field_of_science(self, field_of_science):
         field = self.driver.find_element_by_id('field-of-science')
