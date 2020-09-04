@@ -1,10 +1,6 @@
 from selenium.webdriver.common.by import By
 
-
-class DashboardPageLocators():
-    APPS_LINK = (By.LINK_TEXT, 'Apps')
-    VIEW_ALL_APPS_BTN = (By.LINK_TEXT, 'View all apps')
-
+class BasePageLocators():
     DASHBOARD_SIDE_BTN = (By.XPATH, "//a[@class='nav-link js-scrolsl-trigger'][@href='/slate_portal']")
     CLUSTERS_SIDE_BTN = (By.XPATH, "//a[@class='nav-link js-scroll-trigger'][@href='/clusters']")
     APPS_SIDE_BTN = (By.XPATH, "//a[@class='nav-link js-scroll-trigger'][@href='/applications']")
@@ -13,6 +9,11 @@ class DashboardPageLocators():
     MY_GROUPS_SIDE_BTN = (By.XPATH, "//a[@class='nav-link js-scroll-trigger'][@href='/groups']")
     ALL_GROUPS_SIDE_BTN = (By.XPATH, "//a[@class='nav-link js-scroll-trigger'][@href='/public-groups']")
     CLI_ACCESS_SIDE_BTN = (By.XPATH, "//a[@class='nav-link js-scroll-trigger'][@href='/cli']")
+
+
+class DashboardPageLocators():
+    APPS_LINK = (By.LINK_TEXT, 'Apps')
+    VIEW_ALL_APPS_BTN = (By.LINK_TEXT, 'View all apps')
 
 
 class AppsPageLocators():

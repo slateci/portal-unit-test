@@ -6,8 +6,8 @@ from locator import *
 from element import BasePageElement
 import os
 
-class SearchTextElement(BasePageElement):
-    locator = 'q'
+# class SearchTextElement(BasePageElement):
+#     locator = 'q'
 
 
 class BasePage():
@@ -29,31 +29,31 @@ class BasePage():
         self.driver.back()
 
     def go_to_clusters_page(self):
-        clusters_button = self.driver.find_element(*DashboardPageLocators.CLUSTERS_SIDE_BTN)
+        clusters_button = self.driver.find_element(*BasePageLocators.CLUSTERS_SIDE_BTN)
         clusters_button.click()
     
     def go_to_apps_page(self):
-        apps_button = self.driver.find_element(*DashboardPageLocators.APPS_SIDE_BTN)
+        apps_button = self.driver.find_element(*BasePageLocators.APPS_SIDE_BTN)
         apps_button.click()
     
     def go_to_secrets_page(self):
-        secrets_button = self.driver.find_element(*DashboardPageLocators.SECRETS_SIDE_BTN)
+        secrets_button = self.driver.find_element(*BasePageLocators.SECRETS_SIDE_BTN)
         secrets_button.click()
     
     def go_to_instances_page(self):
-        instances_button = self.driver.find_element(*DashboardPageLocators.INSTANCES_SIDE_BTN)
+        instances_button = self.driver.find_element(*BasePageLocators.INSTANCES_SIDE_BTN)
         instances_button.click()
 
     def go_to_my_groups_page(self):
-        my_groups_button = self.driver.find_element(*DashboardPageLocators.MY_GROUPS_SIDE_BTN)
+        my_groups_button = self.driver.find_element(*BasePageLocators.MY_GROUPS_SIDE_BTN)
         my_groups_button.click()
     
     def go_to_all_groups_page(self):
-        all_groups_button = self.driver.find_element(*DashboardPageLocators.ALL_GROUPS_SIDE_BTN)
+        all_groups_button = self.driver.find_element(*BasePageLocators.ALL_GROUPS_SIDE_BTN)
         all_groups_button.click()
     
     def go_to_cli_access_page(self):
-        cli_access_button = self.driver.find_element(*DashboardPageLocators.CLI_ACCESS_SIDE_BTN)
+        cli_access_button = self.driver.find_element(*BasePageLocators.CLI_ACCESS_SIDE_BTN)
         cli_access_button.click()
 
 
@@ -61,7 +61,7 @@ class BasePageLoggedIn(BasePage):
     pass
 
 class DashboardPage(BasePage):
-    search_text_element = SearchTextElement()
+    # search_text_element = SearchTextElement()
     def is_title_matches(self):
         return 'SLATE - Portal' in self.driver.title
 

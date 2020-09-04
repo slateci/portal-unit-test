@@ -34,7 +34,8 @@ class PortalBrowsing(unittest.TestCase):
 
 
     def test_iterate_clusters_pages(self):
-        clusters_page = self.segue_to_page('clusters')
+        helpers = Helpers()
+        clusters_page = helpers.segue_to_page(self.driver, 'clusters')
         page_number = 1
         click_next = True
 
@@ -65,7 +66,8 @@ class PortalBrowsing(unittest.TestCase):
 
 
     def test_iterate_apps_pages(self):
-        apps_page = self.segue_to_page('applications')
+        helpers = Helpers()
+        apps_page = helpers.segue_to_page(self.driver, 'applications')
 
         for tab_name in ['Stable Applications', 'Incubator Applications']:
             page_number = 1
@@ -107,8 +109,8 @@ class PortalBrowsing(unittest.TestCase):
                     page_number += 1
 
     def test_iterate_instances_pages(self):
-        instances_page = self.segue_to_page('instances')
-
+        helpers = Helpers()
+        instances_page = helpers.segue_to_page(self.driver, 'instances')
         page_number = 1
         click_next = True
 
@@ -139,7 +141,8 @@ class PortalBrowsing(unittest.TestCase):
 
 
     def test_iterate_secrets_pages(self):
-        secrets_page = self.segue_to_page('secrets')
+        helpers = Helpers()
+        secrets_page = helpers.segue_to_page(self.driver, 'secrets')
         page_number = 1
         click_next = True
         
@@ -171,7 +174,8 @@ class PortalBrowsing(unittest.TestCase):
 
 
     def test_iterate_my_groups_pages(self):
-        my_groups_page = self.segue_to_page('my_groups')
+        helpers = Helpers()
+        my_groups_page = helpers.segue_to_page(self.driver, 'my_groups')
         page_number = 1
         click_next = True
 
@@ -201,7 +205,8 @@ class PortalBrowsing(unittest.TestCase):
                 page_number += 1
     
     def test_iterate_all_groups_pages(self):
-        all_groups_page = self.segue_to_page('all_groups')
+        helpers = Helpers()
+        all_groups_page = helpers.segue_to_page(self.driver, 'all_groups')
         page_number = 1
         click_next = True
 
@@ -231,36 +236,8 @@ class PortalBrowsing(unittest.TestCase):
                 page_number += 1
     
     def test_check_cli_access_page(self):
-        self.segue_to_page('cli_access')
-
-    
-    def segue_to_page(self, page_name):
-        start_page = page.BasePage(self.driver)
-        assert start_page.is_page_valid()
-        cur_page = None
-        if page_name == 'clusters':
-            start_page.go_to_clusters_page()
-            cur_page = page.ClustersPage(self.driver)
-        elif page_name == 'applications':
-            start_page.go_to_apps_page()
-            cur_page = page.AppsPage(self.driver)
-        elif page_name == 'secrets':
-            start_page.go_to_secrets_page()
-            cur_page = page.SecretsPage(self.driver)
-        elif page_name == 'instances':
-            start_page.go_to_instances_page()
-            cur_page = page.InstancesPage(self.driver)
-        elif page_name == 'my_groups':
-            start_page.go_to_my_groups_page()
-            cur_page = page.MyGroupsPage(self.driver)
-        elif page_name == 'all_groups':
-            start_page.go_to_all_groups_page()
-            cur_page = page.GroupsPage(self.driver)
-        elif page_name == 'cli_access':
-            start_page.go_to_cli_access_page()
-            cur_page = page.CLIAccessPage(self.driver)
-        assert cur_page.is_page_valid()
-        return cur_page
+        helpers = Helpers()
+        helpers.segue_to_page(self.driver, 'cli_access')
 
     def tearDown(self):
         # self.driver.implicitly_wait(3)
@@ -658,6 +635,23 @@ class FuncTests(unittest.TestCase):
         created_secret_link = group_profile_page.get_secret_link(created_secret)
         assert created_secret == created_secret_link.text
         created_secret_link.click()
+    
+
+    def test_add_secret_2(self):
+        cluster_name = 'my-cluster'
+        secret_name = 'test-secret-with-helper'
+        key_name = 'test-key-name'
+        key_contents = 'test-key-contents'
+        helpers = Helpers()
+        helpers.add_secret(self.driver, cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
+
+        created_secret = '{}: {}'.format(cluster_name, secret_name)
+        group_profile_page = page.GroupProfilePage(self.driver)
+        assert group_profile_page.is_page_valid()
+
+        created_secret_link = group_profile_page.get_secret_link(created_secret)
+        assert created_secret == created_secret_link.text
+        created_secret_link.click()
 
     
     def test_add_secret_wrong_input(self):
@@ -687,7 +681,7 @@ class FuncTests(unittest.TestCase):
         assert filled_key_name == key_name_after_send
 
 
-    def add_mul_secrets(self, num_of_secrets):
+    def add_mul_secrets(self, num_of_secrets=10):
         cluster_name = 'my-cluster'
         secret_prefix = 'test-secret'
         key_name_prefix = 'test-key-name'
@@ -699,6 +693,7 @@ class FuncTests(unittest.TestCase):
             print(secret_name, key_name, key_contents)
             self.add_secret(cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
     
+
     def test_delete_secret(self):
         # first create secret for delete
         group_name = 'my-group'
@@ -735,9 +730,58 @@ class FuncTests(unittest.TestCase):
     
 
     def tearDown(self):
-        # self.driver.implicitly_wait(3)
         time.sleep(7)
         self.driver.close()
+
+
+class Helpers:
+    def segue_to_page(self, driver, page_name):
+        start_page = page.BasePage(driver)
+        assert start_page.is_page_valid()
+        cur_page = None
+        if page_name == 'clusters':
+            start_page.go_to_clusters_page()
+            cur_page = page.ClustersPage(driver)
+        elif page_name == 'applications':
+            start_page.go_to_apps_page()
+            cur_page = page.AppsPage(driver)
+        elif page_name == 'secrets':
+            start_page.go_to_secrets_page()
+            cur_page = page.SecretsPage(driver)
+        elif page_name == 'instances':
+            start_page.go_to_instances_page()
+            cur_page = page.InstancesPage(driver)
+        elif page_name == 'my_groups':
+            start_page.go_to_my_groups_page()
+            cur_page = page.MyGroupsPage(driver)
+        elif page_name == 'all_groups':
+            start_page.go_to_all_groups_page()
+            cur_page = page.GroupsPage(driver)
+        elif page_name == 'cli_access':
+            start_page.go_to_cli_access_page()
+            cur_page = page.CLIAccessPage(driver)
+        assert cur_page.is_page_valid()
+        return cur_page
+    
+
+    def add_secret(self, driver, cluster_name='my-cluster', secret_name='valid-secret-name', key_name='valid-key-name', key_contents='valid-key-contents'):
+        group_name = 'my-group'
+        my_groups_page = self.segue_to_page(driver, 'my_groups')
+        my_groups_page.wait_until_groups_table_loaded()
+
+        group_link = my_groups_page.get_group_link(group_name)
+        group_link.click()
+
+        group_profile_page = page.GroupProfilePage(driver)
+        assert group_profile_page.is_page_valid()
+        group_profile_page.wait_until_page_loaded
+
+        group_profile_page.get_secrets_tab().click()
+        group_profile_page.get_new_secret_btn().submit()
+
+        secrets_create_page = page.SecretsCreatePage(driver)
+        secrets_create_page.fill_form_and_submit(cluster_name, secret_name, key_name, key_contents)
+
 
 if __name__ == '__main__':
     unittest.main()
