@@ -272,39 +272,22 @@ class FuncTests(unittest.TestCase):
         # slate portal
         # self.driver.get('https://portal.slateci.io/slate_portal')
         self.driver.set_window_size(1920, 1080)
-
-    def segue_to_page(self, page_name):
-        start_page = page.BasePage(self.driver)
-        assert start_page.is_page_valid()
-        cur_page = None
-        if page_name == 'clusters':
-            start_page.go_to_clusters_page()
-            cur_page = page.ClustersPage(self.driver)
-        elif page_name == 'applications':
-            start_page.go_to_apps_page()
-            cur_page = page.AppsPage(self.driver)
-        elif page_name == 'instances':
-            start_page.go_to_instances_page()
-            cur_page = page.InstancesPage(self.driver)
-        elif page_name == 'my_groups':
-            start_page.go_to_my_groups_page()
-            cur_page = page.MyGroupsPage(self.driver)
-        assert cur_page.is_page_valid()
-        return cur_page
     
 
     def test_add_instance(self):
+        helpers = Helpers()
         print('test_add_instance')
         app_name = 'nginx'
         app_suffix = 'test-add'
-        instance_detail_page = self.add_instance(app_name, app_suffix=app_suffix)
+        instance_detail_page = helpers.add_instance(self.driver, app_name, app_suffix=app_suffix)
 
     
     def test_add_instance_wrong_input(self):
+        helpers = Helpers()
         print('test add instance with wrong input')
         app_name = 'nginx'
         app_suffix = 'test-add-with-wrong-input'
-        apps_page = self.segue_to_page('applications')
+        apps_page = helpers.segue_to_page(self.driver, 'applications')
         
         apps_page.wait_until_apps_table_loaded('Stable Applications')
         app_link = apps_page.get_app_link(app_name)
@@ -342,62 +325,17 @@ class FuncTests(unittest.TestCase):
             message = cluster_field.get_attribute('validationMessage')
             assert message == 'Please select an item in the list.'
 
-    
-
-    def add_instance(self, app_name, app_suffix=''):
-        apps_page = self.segue_to_page('applications')
-        installed = False
-        # find the app
-        
-        instance_detail_page = None
-            
-        apps_page.wait_until_apps_table_loaded('Stable Applications')
-        app_link = apps_page.get_app_link(app_name)
-
-        if app_link:
-            print('installing', app_link.text)
-            app_link.click()
-            app_detail_page = page.AppsDetailPage(self.driver)
-            assert app_detail_page.is_page_valid()
-            app_detail_page.wait_until_ready_for_install()
-            app_detail_page.click_intall_app()
-            
-            app_create_page = page.AppCreatePage(self.driver)
-            assert app_create_page.is_page_valid()
-            app_create_page.fill_group()
-            app_create_page.click_next()
-
-            app_create_final_page = page.AppCreateFinalPage(self.driver)
-            assert app_create_final_page.is_page_valid()
-            app_create_final_page.fill_cluster()
-            app_create_final_page.fill_configuration(app_suffix)
-            app_create_final_page.click_install()
-
-            # enter instance detail page; check instance name
-            instance_detail_page = page.InstanceProfilePage(self.driver)
-            assert instance_detail_page.is_page_valid()
-            instance_detail_page.wait_until_page_loaded()
-
-            installed_app_name = instance_detail_page.get_app_name()
-            assert installed_app_name == app_name
-            
-            # change install flag to true
-            installed = True
-        
-        assert installed
-        print('Instance: {} installed'.format(app_name))
-        return instance_detail_page
-
 
     def test_delete_instance(self):
+        helpers = Helpers()
         print('test_delete_instance')
         # add a new instance for delete
         app_name = 'nginx'
         app_suffix = 'test-delete'
-        instance_detail_page = self.add_instance(app_name,app_suffix=app_suffix)
+        instance_detail_page = helpers.add_instance(self.driver, app_name,app_suffix=app_suffix)
         
         # delete the instance 
-        instances_page = self.segue_to_page('instances')
+        instances_page = helpers.segue_to_page(self.driver, 'instances')
         instances_page.wait_until_instances_table_loaded()
         instance_name = app_name + '-' + app_suffix
         
@@ -428,33 +366,19 @@ class FuncTests(unittest.TestCase):
         print('Instance {} successfully deleted'.format(instance_name))
 
 
-    def add_group(self, group_name='valid-name', phone_number='555-5555', email='slate@slateci.io', field_of_science='Biology'):
-        my_groups_page = self.segue_to_page('my_groups')
-        my_groups_page.get_register_new_group_btn().click()
-        create_new_group = page.CreateNewGroupPage(self.driver)
-        # create_new_group.wait_until_form_loaded()
-
-        create_new_group.fill_group_name(group_name)
-        create_new_group.fill_phone_number(phone_number)
-        create_new_group.fill_email(email)
-        create_new_group.fill_field_of_science(field_of_science)
-        create_new_group.create_group()
-        
-        cur_page = page.BasePage(self.driver)
-        assert cur_page.is_page_valid()
-    
-
     def test_add_group(self):
         print('test add new group')
         group_name = 'test-add-group'
-        self.add_group(group_name=group_name)
+        helpers = Helpers()
+        helpers.add_group(self.driver, group_name=group_name)
     
-    
+
     def test_add_group_wrong_input(self):
         print('test adding new group with wrong inputs')
+        helpers = Helpers()
         # test invalid group name
         invalid_group_name = 'valid@name'
-        self.add_group(group_name=invalid_group_name)
+        helpers.add_group(self.driver, group_name=invalid_group_name)
         create_new_group_page = page.CreateNewGroupPage(self.driver)
         group_name_field = create_new_group_page.get_group_name_field()
         message = group_name_field.get_attribute('validationMessage')
@@ -462,7 +386,7 @@ class FuncTests(unittest.TestCase):
 
         # test empty phone number field
         empty_phone_number = ''
-        self.add_group(phone_number=empty_phone_number)
+        helpers.add_group(self.driver, phone_number=empty_phone_number)
         create_new_group_page = page.CreateNewGroupPage(self.driver)
         phone_number_field = create_new_group_page.get_phone_number_field()
         message = phone_number_field.get_attribute('validationMessage')
@@ -470,7 +394,7 @@ class FuncTests(unittest.TestCase):
 
         # test invalid email (without '@')
         invalid_email = 'slate-slateci.io'
-        self.add_group(email=invalid_email)
+        helpers.add_group(self.driver, email=invalid_email)
         create_new_group_page = page.CreateNewGroupPage(self.driver)
         email_field = create_new_group_page.get_email_field()
         message = email_field.get_attribute('validationMessage')
@@ -478,7 +402,7 @@ class FuncTests(unittest.TestCase):
 
         # test empty field of science
         empty_field_of_science = ''
-        self.add_group(field_of_science=empty_field_of_science)
+        helpers.add_group(self.driver, field_of_science=empty_field_of_science)
         create_new_group_page = page.CreateNewGroupPage(self.driver)
         science_field = create_new_group_page.get_field_of_science()
         message = science_field.get_attribute('validationMessage')
@@ -487,13 +411,14 @@ class FuncTests(unittest.TestCase):
 
     def test_edit_group_wrong_input(self):
         print('test editing new group with wrong inputs')
+        helpers = Helpers()
         # add group for edit with wrong input
         group_name = 'test-edit-group-wrong-input'
         print('adding group {} for edit group test'.format(group_name))
-        self.add_group(group_name=group_name)
+        helpers.add_group(self.driver, group_name=group_name)
         # edit with wrong input
         print('test_edit_group_with_wrong_input')
-        my_groups_page = self.segue_to_page('my_groups')
+        my_groups_page = helpers.segue_to_page(self.driver, 'my_groups')
         my_groups_page.wait_until_groups_table_loaded()
 
         group_link = my_groups_page.get_group_link(group_name)
@@ -510,14 +435,14 @@ class FuncTests(unittest.TestCase):
 
         # test invalid email input
         invalid_email = 'selenium-testslateci.io'
-        self.edit_group_on_edit_page(group_edit_page, email=invalid_email)
+        helpers.edit_group_on_edit_page(group_edit_page, email=invalid_email)
         email_field = group_edit_page.get_email_field()
         message = email_field.get_attribute('validationMessage')
         assert message == "Please include an '@' in the email address. '{}' is missing an '@'.".format(invalid_email)
 
         # test missing phone number
         missing_phone_number = ''
-        self.edit_group_on_edit_page(group_edit_page, phone_number=missing_phone_number)
+        helpers.edit_group_on_edit_page(group_edit_page, phone_number=missing_phone_number)
         phone_number_field = group_edit_page.get_phone_number_field()
         message = phone_number_field.get_attribute('validationMessage')
         assert message == 'Please fill out this field.'
@@ -528,26 +453,17 @@ class FuncTests(unittest.TestCase):
         # science_field = group_edit_page.get_science_field()
         # message = science_field.get_attribute('validationMessage')
         # print(message)
-        
-
-    def edit_group_on_edit_page(self, group_edit_page, email='selenium-test@slateci.io', phone_number='777-7777', field_of_science='Physics', description='Testing group edit functionality'):
-        group_edit_page.update_email(email)
-        group_edit_page.update_phone_number(phone_number)
-        group_edit_page.update_field_of_science(field_of_science)
-        group_edit_page.update_description(description)
-        # click update
-        group_edit_page.update_group()
-
 
 
     def test_edit_group(self):
+        helpers = Helpers()
         # add group for edit
         group_name = 'test-edit-group'
         print('adding group {} for edit group test'.format(group_name))
-        self.add_group(group_name=group_name)
+        helpers.add_group(self.driver, group_name=group_name)
         # edit group
         print('test_edit_group')
-        my_groups_page = self.segue_to_page('my_groups')
+        my_groups_page = helpers.segue_to_page(self.driver, 'my_groups')
         my_groups_page.wait_until_groups_table_loaded()
 
         group_link = my_groups_page.get_group_link(group_name)
@@ -566,7 +482,7 @@ class FuncTests(unittest.TestCase):
         new_phone_number = '777-7777'
         new_field_of_science = 'Physics'
         new_description = 'Testing group edit functionality'
-        self.edit_group_on_edit_page(group_edit_page, email=new_email, phone_number=new_phone_number, field_of_science=new_field_of_science, description=new_description)
+        helpers.edit_group_on_edit_page(group_edit_page, email=new_email, phone_number=new_phone_number, field_of_science=new_field_of_science, description=new_description)
 
         # confirm group info updated
         group_profile_page.wait_until_page_loaded()
@@ -577,13 +493,14 @@ class FuncTests(unittest.TestCase):
 
 
     def test_delete_group(self):
+        helpers = Helpers()
         # add group for delete
         group_name = 'test-delete-group'
         print('adding group {} for delete group test'.format(group_name))
-        self.add_group(group_name=group_name)
+        helpers.add_group(self.driver, group_name=group_name)
         # delete group
         print('test_delete_group')
-        my_groups_page = self.segue_to_page('my_groups')
+        my_groups_page = helpers.segue_to_page(self.driver, 'my_groups')
         my_groups_page.wait_until_groups_table_loaded()
 
         group_link = my_groups_page.get_group_link(group_name)
@@ -605,26 +522,7 @@ class FuncTests(unittest.TestCase):
         # confirm group deleted
         group_link = my_groups_page.get_group_link(group_name)
         assert not group_link
-
-    
-    # def add_secret(self, cluster_name='my-cluster', secret_name='valid-secret-name', key_name='valid-key-name', key_contents='valid-key-contents'):
-    #     group_name = 'my-group'
-    #     my_groups_page = self.segue_to_page('my_groups')
-    #     my_groups_page.wait_until_groups_table_loaded()
-
-    #     group_link = my_groups_page.get_group_link(group_name)
-    #     group_link.click()
-
-    #     group_profile_page = page.GroupProfilePage(self.driver)
-    #     assert group_profile_page.is_page_valid()
-    #     group_profile_page.wait_until_page_loaded
-
-    #     group_profile_page.get_secrets_tab().click()
-    #     group_profile_page.get_new_secret_btn().submit()
-
-    #     secrets_create_page = page.SecretsCreatePage(self.driver)
-    #     secrets_create_page.fill_form_and_submit(cluster_name, secret_name, key_name, key_contents)
-    
+   
 
     def test_add_secret(self):
         cluster_name = 'my-cluster'
@@ -742,6 +640,67 @@ class Helpers:
         return cur_page
     
 
+    def add_instance(self, driver, app_name, app_suffix=''):
+        apps_page = self.segue_to_page(driver, 'applications')
+        installed = False
+        # find the app
+        
+        instance_detail_page = None
+            
+        apps_page.wait_until_apps_table_loaded('Stable Applications')
+        app_link = apps_page.get_app_link(app_name)
+
+        if app_link:
+            print('installing', app_link.text)
+            app_link.click()
+            app_detail_page = page.AppsDetailPage(driver)
+            assert app_detail_page.is_page_valid()
+            app_detail_page.wait_until_ready_for_install()
+            app_detail_page.click_intall_app()
+            
+            app_create_page = page.AppCreatePage(driver)
+            assert app_create_page.is_page_valid()
+            app_create_page.fill_group()
+            app_create_page.click_next()
+
+            app_create_final_page = page.AppCreateFinalPage(driver)
+            assert app_create_final_page.is_page_valid()
+            app_create_final_page.fill_cluster()
+            app_create_final_page.fill_configuration(app_suffix)
+            app_create_final_page.click_install()
+
+            # enter instance detail page; check instance name
+            instance_detail_page = page.InstanceProfilePage(driver)
+            assert instance_detail_page.is_page_valid()
+            instance_detail_page.wait_until_page_loaded()
+
+            installed_app_name = instance_detail_page.get_app_name()
+            assert installed_app_name == app_name
+            
+            # change install flag to true
+            installed = True
+        
+        assert installed
+        print('Instance: {} installed'.format(app_name))
+        return instance_detail_page
+
+
+    def add_group(self, driver, group_name='valid-name', phone_number='555-5555', email='slate@slateci.io', field_of_science='Biology'):
+        my_groups_page = self.segue_to_page(driver, 'my_groups')
+        my_groups_page.get_register_new_group_btn().click()
+        create_new_group = page.CreateNewGroupPage(driver)
+        # create_new_group.wait_until_form_loaded()
+
+        create_new_group.fill_group_name(group_name)
+        create_new_group.fill_phone_number(phone_number)
+        create_new_group.fill_email(email)
+        create_new_group.fill_field_of_science(field_of_science)
+        create_new_group.create_group()
+        
+        cur_page = page.BasePage(driver)
+        assert cur_page.is_page_valid()
+
+
     def add_secret(self, driver, cluster_name='my-cluster', secret_name='valid-secret-name', key_name='valid-key-name', key_contents='valid-key-contents'):
         group_name = 'my-group'
         my_groups_page = self.segue_to_page(driver, 'my_groups')
@@ -772,6 +731,15 @@ class Helpers:
             key_contents = key_contents_prefix + '-' + str(i)
             print(secret_name, key_name, key_contents)
             self.add_secret(driver, cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
+
+    
+    def edit_group_on_edit_page(self, group_edit_page, email='selenium-test@slateci.io', phone_number='777-7777', field_of_science='Physics', description='Testing group edit functionality'):
+        group_edit_page.update_email(email)
+        group_edit_page.update_phone_number(phone_number)
+        group_edit_page.update_field_of_science(field_of_science)
+        group_edit_page.update_description(description)
+        # click update
+        group_edit_page.update_group()
     
 
 

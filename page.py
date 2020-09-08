@@ -333,7 +333,7 @@ class InstancesPage(BasePage):
 class InstanceProfilePage(BasePage):
     def wait_until_page_loaded(self):
         WebDriverWait(self.driver, 20).until(
-            EC.presence_of_element_located((By.ID, 'pods-table'))
+            EC.presence_of_element_located((By.ID, 'details'))
         )
     def get_instance_name(self):
         instance_name = self.driver.find_element_by_xpath("//div[@class='col-lg-12 mx-auto']/h2[1]")
