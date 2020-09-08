@@ -142,6 +142,11 @@ class PortalBrowsing(unittest.TestCase):
 
     def test_iterate_secrets_pages(self):
         helpers = Helpers()
+
+        # create a group of secrets
+        helpers.add_mul_secrets(self.driver)
+
+        # iterate secrets
         secrets_page = helpers.segue_to_page(self.driver, 'secrets')
         page_number = 1
         click_next = True
@@ -602,42 +607,26 @@ class FuncTests(unittest.TestCase):
         assert not group_link
 
     
-    def add_secret(self, cluster_name='my-cluster', secret_name='valid-secret-name', key_name='valid-key-name', key_contents='valid-key-contents'):
-        group_name = 'my-group'
-        my_groups_page = self.segue_to_page('my_groups')
-        my_groups_page.wait_until_groups_table_loaded()
+    # def add_secret(self, cluster_name='my-cluster', secret_name='valid-secret-name', key_name='valid-key-name', key_contents='valid-key-contents'):
+    #     group_name = 'my-group'
+    #     my_groups_page = self.segue_to_page('my_groups')
+    #     my_groups_page.wait_until_groups_table_loaded()
 
-        group_link = my_groups_page.get_group_link(group_name)
-        group_link.click()
+    #     group_link = my_groups_page.get_group_link(group_name)
+    #     group_link.click()
 
-        group_profile_page = page.GroupProfilePage(self.driver)
-        assert group_profile_page.is_page_valid()
-        group_profile_page.wait_until_page_loaded
+    #     group_profile_page = page.GroupProfilePage(self.driver)
+    #     assert group_profile_page.is_page_valid()
+    #     group_profile_page.wait_until_page_loaded
 
-        group_profile_page.get_secrets_tab().click()
-        group_profile_page.get_new_secret_btn().submit()
+    #     group_profile_page.get_secrets_tab().click()
+    #     group_profile_page.get_new_secret_btn().submit()
 
-        secrets_create_page = page.SecretsCreatePage(self.driver)
-        secrets_create_page.fill_form_and_submit(cluster_name, secret_name, key_name, key_contents)
-
-
-    def test_add_secret(self):
-        cluster_name = 'my-cluster'
-        secret_name = 'test-secret'
-        key_name = 'test-key-name'
-        key_contents = 'test-key-contents'
-        self.add_secret(cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
-
-        created_secret = '{}: {}'.format(cluster_name, secret_name)
-        group_profile_page = page.GroupProfilePage(self.driver)
-        assert group_profile_page.is_page_valid()
-
-        created_secret_link = group_profile_page.get_secret_link(created_secret)
-        assert created_secret == created_secret_link.text
-        created_secret_link.click()
+    #     secrets_create_page = page.SecretsCreatePage(self.driver)
+    #     secrets_create_page.fill_form_and_submit(cluster_name, secret_name, key_name, key_contents)
     
 
-    def test_add_secret_2(self):
+    def test_add_secret(self):
         cluster_name = 'my-cluster'
         secret_name = 'test-secret-with-helper'
         key_name = 'test-key-name'
@@ -658,7 +647,8 @@ class FuncTests(unittest.TestCase):
         print('test adding new secret with wrong inputs')
         # test cluster not selected
         cluster_not_selected = ''
-        self.add_secret(cluster_name=cluster_not_selected)
+        helpers = Helpers()
+        helpers.add_secret(self.driver, cluster_name=cluster_not_selected)
         secrets_create_page = page.SecretsCreatePage(self.driver)
         cluster_field = secrets_create_page.get_cluster_field()
         message = cluster_field.get_attribute('validationMessage')
@@ -679,19 +669,6 @@ class FuncTests(unittest.TestCase):
         key_name_field = secrets_create_page.get_key_name_field()
         filled_key_name = key_name_field.get_attribute('value')
         assert filled_key_name == key_name_after_send
-
-
-    def add_mul_secrets(self, num_of_secrets=10):
-        cluster_name = 'my-cluster'
-        secret_prefix = 'test-secret'
-        key_name_prefix = 'test-key-name'
-        key_contents_prefix = 'test-key-contents'
-        for i in range(num_of_secrets):
-            secret_name = secret_prefix + '-' + str(i)
-            key_name = key_name_prefix + '-' + str(i)
-            key_contents = key_contents_prefix + '-' + str(i)
-            print(secret_name, key_name, key_contents)
-            self.add_secret(cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
     
 
     def test_delete_secret(self):
@@ -703,7 +680,8 @@ class FuncTests(unittest.TestCase):
         key_contents = 'test-delete-key-contents'
 
         print('adding secret {} for delete secret test'.format(secret_name))
-        self.add_secret(cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
+        helpers = Helpers()
+        helpers.add_secret(self.driver, cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
 
         created_secret = '{}: {}'.format(cluster_name, secret_name)
         group_profile_page = page.GroupProfilePage(self.driver)
@@ -730,7 +708,7 @@ class FuncTests(unittest.TestCase):
     
 
     def tearDown(self):
-        time.sleep(7)
+        time.sleep(5)
         self.driver.close()
 
 
@@ -781,6 +759,20 @@ class Helpers:
 
         secrets_create_page = page.SecretsCreatePage(driver)
         secrets_create_page.fill_form_and_submit(cluster_name, secret_name, key_name, key_contents)
+    
+
+    def add_mul_secrets(self, driver, num_of_secrets=5):
+        cluster_name = 'my-cluster'
+        secret_prefix = 'test-secret'
+        key_name_prefix = 'test-key-name'
+        key_contents_prefix = 'test-key-contents'
+        for i in range(num_of_secrets):
+            secret_name = secret_prefix + '-' + str(i)
+            key_name = key_name_prefix + '-' + str(i)
+            key_contents = key_contents_prefix + '-' + str(i)
+            print(secret_name, key_name, key_contents)
+            self.add_secret(driver, cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
+    
 
 
 if __name__ == '__main__':
