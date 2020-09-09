@@ -209,8 +209,63 @@ class ClustersPage(BasePage):
         return self.driver.find_element_by_id('cluster-table_next')
 
 
-class ClusterProfilePage(BasePage):
+class ClusterPublicProfilePage(BasePage):
     pass
+
+
+class ClusterProfilePage(BasePage):
+    def wait_until_page_loaded(self):
+        WebDriverWait(self.driver, 20).until(
+            EC.presence_of_element_located((By.ID, 'cluster-profile'))
+        )
+
+    def get_edit_info_btn(self):
+        return self.driver.find_element_by_link_text('Edit Info')
+
+    def get_group_selector(self):
+        return self.driver.find_element_by_id('new_group')
+    
+    def set_group_selector(self, group_name):
+        selector = self.get_group_selector()
+        selector.send_keys(group_name)
+
+    def get_add_group_btn(self, cluster_name):
+        return self.driver.find_element_by_xpath("//form[@action='/groups/my-group/clusters/{}']/button[1]".format(cluster_name))
+
+
+class ClusterEditPage(BasePage):
+    def wait_until_page_loaded(self):
+        WebDriverWait(self.driver, 20).until(
+            EC.presence_of_element_located((By.XPATH, "//form[@role='form']"))
+        )
+    
+    def get_org_field(self):
+        return self.driver.find_element_by_id('owningOrganization')
+
+    def set_org_field(self, org_name):
+        org_field = self.get_org_field()
+        org_field.clear()
+        org_field.send_keys(org_name)
+
+    def get_latitude_field(self):
+        return self.driver.find_element_by_id('latitude')
+
+    def set_latitude_field(self, latitude):
+        lat_field = self.get_latitude_field()
+        lat_field.clear()
+        lat_field.send_keys(latitude)
+
+    def get_longitude_field(self):
+        return self.driver.find_element_by_id('longitude')
+
+    def set_longitude_field(self, longitude):
+        long_field = self.get_longitude_field()
+        long_field.clear()
+        long_field.send_keys(longitude)
+
+    def get_update_btn(self):
+        return self.driver.find_element_by_xpath("//button[@class='btn btn-primary']")
+
 
 
 class SecretsPage(BasePage):
@@ -490,6 +545,16 @@ class GroupProfilePage(BasePage):
 
     def switch_to_alert_popup(self):
         return self.driver.switch_to.alert
+    
+    def get_cluster_link(self, cluster_name):
+        WebDriverWait(self.driver, 20).until(
+            EC.presence_of_element_located((By.ID, 'table-data'))
+            )
+        try:
+            link = self.driver.find_element_by_link_text(cluster_name)
+            return link
+        except:
+            return None
     
     def get_secrets_tab(self):
         return self.driver.find_element_by_id('secrets_tab')

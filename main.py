@@ -49,7 +49,7 @@ class PortalBrowsing(unittest.TestCase):
             for i in range(num_of_links):
                 print('Testing cluster page:', clusters_links[i].text)
                 clusters_links[i].click()
-                clusters_profile_page = page.ClusterProfilePage(self.driver)
+                clusters_profile_page = page.ClusterPublicProfilePage(self.driver)
                 assert clusters_profile_page.is_page_valid()
                 self.driver.back()
                 clusters_page.wait_until_clusters_table_loaded()
@@ -508,7 +508,7 @@ class FuncTests(unittest.TestCase):
 
         group_profile_page = page.GroupProfilePage(self.driver)
         assert group_profile_page.is_page_valid()
-        group_profile_page.wait_until_page_loaded
+        group_profile_page.wait_until_page_loaded()
         group_profile_page.get_delete_group_btn().click()
         try:
             alert = group_profile_page.switch_to_alert_popup()
@@ -523,6 +523,47 @@ class FuncTests(unittest.TestCase):
         group_link = my_groups_page.get_group_link(group_name)
         assert not group_link
    
+
+    def in_progress_test_edit_cluster_in_group(self):
+        helpers = Helpers()
+        group_name = 'my-group'
+        cluster_name = 'my-cluster'
+        my_groups_page = helpers.segue_to_page(self.driver, 'my_groups')
+        my_groups_page.wait_until_groups_table_loaded()
+        # enter the group page
+        group_link = my_groups_page.get_group_link(group_name)
+        group_link.click()
+        group_profile_page = page.GroupProfilePage(self.driver)
+        assert group_profile_page.is_page_valid()
+        group_profile_page.wait_until_page_loaded()
+        # enter the cluster page
+        cluster_link = group_profile_page.get_cluster_link(cluster_name)
+        cluster_link.click()
+
+        cluster_profile_page = page.ClusterProfilePage(self.driver)
+        assert cluster_profile_page.is_page_valid()
+        cluster_profile_page.wait_until_page_loaded()
+
+        # test edit button
+        edit_info_btn = cluster_profile_page.get_edit_info_btn()
+        edit_info_btn.click()
+
+        cluster_edit_page = page.ClusterEditPage(self.driver)
+        assert cluster_edit_page.is_page_valid()
+        cluster_edit_page.wait_until_page_loaded()
+
+        cluster_edit_page.set_org_field('SLATE12')
+        cluster_edit_page.set_latitude_field('0.05')
+        cluster_edit_page.set_longitude_field('0.06')
+
+        cluster_edit_page.get_update_btn().click()
+
+        # test group selector
+        # cluster_profile_page.set_group_selector('test-add-group')
+        # add_group_btn = cluster_profile_page.get_add_group_btn(cluster_name)
+        # add_group_btn.click()
+
+
 
     def test_add_secret(self):
         cluster_name = 'my-cluster'
