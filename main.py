@@ -552,16 +552,82 @@ class FuncTests(unittest.TestCase):
         assert cluster_edit_page.is_page_valid()
         cluster_edit_page.wait_until_page_loaded()
 
-        cluster_edit_page.set_org_field('SLATE12')
-        cluster_edit_page.set_latitude_field('0.05')
-        cluster_edit_page.set_longitude_field('0.06')
+        cluster_edit_page.set_org_field('SLATE1')
+        # cluster_edit_page.set_latitude_field('0.05')
+        # cluster_edit_page.set_longitude_field('0.06')
+        cluster_edit_page.get_latitude_field().clear()
+        cluster_edit_page.get_longitude_field().clear()
 
         cluster_edit_page.get_update_btn().click()
+
+        nextPage = page.BasePage(self.driver)
+        assert nextPage.is_page_valid()
 
         # test group selector
         # cluster_profile_page.set_group_selector('test-add-group')
         # add_group_btn = cluster_profile_page.get_add_group_btn(cluster_name)
         # add_group_btn.click()
+    
+
+    def in_progress_test_add_group_to_cluster(self):
+        helpers = Helpers()
+        # add group
+
+        # add group to cluster
+        group_name = 'my-group'
+        cluster_name = 'my-cluster'
+        my_groups_page = helpers.segue_to_page(self.driver, 'my_groups')
+        my_groups_page.wait_until_groups_table_loaded()
+        # enter the group page
+        group_link = my_groups_page.get_group_link(group_name)
+        group_link.click()
+        group_profile_page = page.GroupProfilePage(self.driver)
+        assert group_profile_page.is_page_valid()
+        group_profile_page.wait_until_page_loaded()
+        # enter the cluster page
+        cluster_link = group_profile_page.get_cluster_link(cluster_name)
+        cluster_link.click()
+
+        cluster_profile_page = page.ClusterProfilePage(self.driver)
+        assert cluster_profile_page.is_page_valid()
+        cluster_profile_page.wait_until_page_loaded()
+
+        # test group selector
+        cluster_profile_page.set_group_selector('test-add-group')
+        add_group_btn = cluster_profile_page.get_add_group_btn(cluster_name)
+        add_group_btn.click()
+
+        # confirm group added
+    
+    def in_progress_test_revoke_group_from_cluster(self):
+        helpers = Helpers()
+        # add group
+
+        # add group to cluster
+        group_name = 'my-group'
+        cluster_name = 'my-cluster'
+        my_groups_page = helpers.segue_to_page(self.driver, 'my_groups')
+        my_groups_page.wait_until_groups_table_loaded()
+        # enter the group page
+        group_link = my_groups_page.get_group_link(group_name)
+        group_link.click()
+        group_profile_page = page.GroupProfilePage(self.driver)
+        assert group_profile_page.is_page_valid()
+        group_profile_page.wait_until_page_loaded()
+        # enter the cluster page
+        cluster_link = group_profile_page.get_cluster_link(cluster_name)
+        cluster_link.click()
+
+        cluster_profile_page = page.ClusterProfilePage(self.driver)
+        assert cluster_profile_page.is_page_valid()
+        cluster_profile_page.wait_until_page_loaded()
+
+        # test group selector
+        cluster_profile_page.set_group_selector('test-add-group')
+        add_group_btn = cluster_profile_page.get_add_group_btn(cluster_name)
+        add_group_btn.click()
+
+        # confirm group added
 
 
 

@@ -110,15 +110,25 @@ This test is set up using the page object pattern detailed in the Selenium-Pytho
     │   │   ├── test_iterate_clusters_pages
     │   │   ├── test_iterate_apps_pages
     │   │   ├── test_iterate_instances_pages
+    │   │   ├── test_iterate_secrets_pages
     │   │   ├── test_iterate_my_groups_pages
     │   │   ├── test_iterate_all_groups_pages
     │   │   └── test_check_cli_access_page
     │   └── FuncTests                               # tests to modify instance/group through the portal
     │       ├── test_add_instance                   # add an Nginx instance
+    │       ├── test_add_instance_wrong_input       # try adding an Nginx instance with wrong input
     │       ├── test_delete_instance                # delete the added Nginx instance
     │       ├── test_add_group                      # add a "test-group" group
+    │       ├── test_add_group_wrong_input          # try adding a group with wrong input
     │       ├── test_edit_group                     # edit "test-group" group
-    │       └── test_delete_group                   # delete "test-group" group
+    │       ├── test_edit_group_wrong_input         # try editing a group with wrong input
+    │       ├── test_delete_group                   # delete "test-group" group
+    │       ├── test_edit_cluster_in_group (in progress)
+    │       ├── test_add_group_to_cluster (in progress)
+    │       ├── test_revoke_group_from_cluster (in progress)
+    │       ├── test_add_secret                     # add a secret
+    │       ├── test_add_secret_wrong_input         # trying adding a secret with wrong input
+    │       └── test_delete_secret                  # delete a secret
     └── ...
 ## Run Test
 To run all tests
