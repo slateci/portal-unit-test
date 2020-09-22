@@ -273,15 +273,19 @@ class FuncTests(unittest.TestCase):
         # self.driver.get('https://portal.slateci.io/slate_portal')
         self.driver.set_window_size(1920, 1080)
     
-
-    def test_add_instance(self):
-        helpers = Helpers()
-        print('test_add_instance')
-        app_name = 'nginx'
-        app_suffix = 'test-add'
-        instance_detail_page = helpers.add_instance(self.driver, app_name, app_suffix=app_suffix)
-
     
+    def test_add_and_delete_instance(self):
+        helpers = Helpers()
+        print('test_add_and_delete_instance')
+        # add a new instance
+        app_name = 'nginx'
+        app_suffix = 'test-add-and-delete'
+        helpers.add_instance(self.driver, app_name,app_suffix=app_suffix)
+        
+        # delete the instance
+        helpers.delete_instance(self.driver, app_name, app_suffix)
+
+
     def test_add_instance_wrong_input(self):
         helpers = Helpers()
         print('test add instance with wrong input')
@@ -323,55 +327,19 @@ class FuncTests(unittest.TestCase):
 
             cluster_field = app_create_final_page.get_cluster_field()
             message = cluster_field.get_attribute('validationMessage')
-            assert message == 'Please select an item in the list.'
-
-
-    def test_delete_instance(self):
-        helpers = Helpers()
-        print('test_delete_instance')
-        # add a new instance for delete
-        app_name = 'nginx'
-        app_suffix = 'test-delete'
-        instance_detail_page = helpers.add_instance(self.driver, app_name,app_suffix=app_suffix)
-        
-        # delete the instance 
-        instances_page = helpers.segue_to_page(self.driver, 'instances')
-        instances_page.wait_until_instances_table_loaded()
-        instance_name = app_name + '-' + app_suffix
-        
-        instance_link = instances_page.get_instance_link(instance_name)
-
-        instance_link.click()
-        instance_detail_page = page.InstanceProfilePage(self.driver)
-        assert instance_detail_page.is_page_valid()
-
-        instance_name = instance_detail_page.get_instance_name()
-        cluster_name = instance_detail_page.get_cluster_name()
-        group_name = instance_detail_page.get_group_name()
-        
-        print('Click Delete button of {}'.format(instance_name))
-        instance_detail_page.get_delete_button().click()
-        try:
-            alert = instance_detail_page.switch_to_alert_popup()
-            # time.sleep(1)
-            alert.accept()
-            print('Alert pop up accepted')
-        except:
-            print('Error occur at confirming instance delete')
-
-        # check instance deleted
-        instances_page.wait_until_instances_table_loaded()
-        instance_link = instances_page.get_instance_link(instance_name)
-        assert not instance_link
-        print('Instance {} successfully deleted'.format(instance_name))
-
-
-    def test_add_group(self):
-        print('test add new group')
-        group_name = 'test-add-group'
-        helpers = Helpers()
-        helpers.add_group(self.driver, group_name=group_name)
+            assert message == 'Please select an item in the list.' 
     
+
+    def test_add_and_delete_group(self):
+        helpers = Helpers()
+        # add group
+        group_name = 'test-add-and-delete-group'
+        print('adding group {} for delete group test'.format(group_name))
+        helpers.add_group(self.driver, group_name=group_name)
+        # delete group
+        print('test_delete_group')
+        helpers.delete_group(self.driver, group_name)
+
 
     def test_add_group_wrong_input(self):
         print('test adding new group with wrong inputs')
@@ -491,37 +459,9 @@ class FuncTests(unittest.TestCase):
         assert group_profile_page.get_email() == new_email
         assert group_profile_page.get_phone_number() == new_phone_number
 
+        # delete the group
+        helpers.delete_group(self.driver, group_name)
 
-    def test_delete_group(self):
-        helpers = Helpers()
-        # add group for delete
-        group_name = 'test-delete-group'
-        print('adding group {} for delete group test'.format(group_name))
-        helpers.add_group(self.driver, group_name=group_name)
-        # delete group
-        print('test_delete_group')
-        my_groups_page = helpers.segue_to_page(self.driver, 'my_groups')
-        my_groups_page.wait_until_groups_table_loaded()
-
-        group_link = my_groups_page.get_group_link(group_name)
-        group_link.click()
-
-        group_profile_page = page.GroupProfilePage(self.driver)
-        assert group_profile_page.is_page_valid()
-        group_profile_page.wait_until_page_loaded()
-        group_profile_page.get_delete_group_btn().click()
-        try:
-            alert = group_profile_page.switch_to_alert_popup()
-            # time.sleep(1)
-            alert.accept()
-            # alert.dismiss()
-            print('Alert pop up accepted')
-        except:
-            print('Error occur at confirming group delete')
-        
-        # confirm group deleted
-        group_link = my_groups_page.get_group_link(group_name)
-        assert not group_link
    
 
     def in_progress_test_edit_cluster_in_group(self):
@@ -572,6 +512,9 @@ class FuncTests(unittest.TestCase):
     def in_progress_test_add_group_to_cluster(self):
         helpers = Helpers()
         # add group
+        added_group_name = 'test-add-group-to-cluster'
+        print('adding group {} for delete group test'.format(added_group_name))
+        helpers.add_group(self.driver, group_name=added_group_name)
 
         # add group to cluster
         group_name = 'my-group'
@@ -593,15 +536,21 @@ class FuncTests(unittest.TestCase):
         cluster_profile_page.wait_until_page_loaded()
 
         # test group selector
-        cluster_profile_page.set_group_selector('test-add-group')
+        cluster_profile_page.set_group_selector(added_group_name)
         add_group_btn = cluster_profile_page.get_add_group_btn(cluster_name)
         add_group_btn.click()
 
         # confirm group added
+
+        # delete group
     
+
     def in_progress_test_revoke_group_from_cluster(self):
         helpers = Helpers()
         # add group
+        added_group_name = 'test-add-group-to-revoke-from-cluster'
+        print('adding group {} for delete group test'.format(added_group_name))
+        helpers.add_group(self.driver, group_name=added_group_name)
 
         # add group to cluster
         group_name = 'my-group'
@@ -623,22 +572,31 @@ class FuncTests(unittest.TestCase):
         cluster_profile_page.wait_until_page_loaded()
 
         # test group selector
-        cluster_profile_page.set_group_selector('test-add-group')
+        cluster_profile_page.set_group_selector(added_group_name)
         add_group_btn = cluster_profile_page.get_add_group_btn(cluster_name)
         add_group_btn.click()
 
         # confirm group added
 
+        # revoke group
+        revoke_group_btn = cluster_profile_page.get_revoke_btn(added_group_name)
+        revoke_group_btn.click()
+
+        # confirm group revoke
+
+        # delete group
 
 
-    def test_add_secret(self):
+    def test_add_and_delete_secret(self):
+        group_name = 'my-group'
         cluster_name = 'my-cluster'
         secret_name = 'test-secret-with-helper'
         key_name = 'test-key-name'
         key_contents = 'test-key-contents'
         helpers = Helpers()
+        # add the secret
         helpers.add_secret(self.driver, cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
-
+        # confirm secret added
         created_secret = '{}: {}'.format(cluster_name, secret_name)
         group_profile_page = page.GroupProfilePage(self.driver)
         assert group_profile_page.is_page_valid()
@@ -646,6 +604,9 @@ class FuncTests(unittest.TestCase):
         created_secret_link = group_profile_page.get_secret_link(created_secret)
         assert created_secret == created_secret_link.text
         created_secret_link.click()
+
+        # delete the secret
+        helpers.delete_secret(self.driver, group_name, cluster_name, secret_name)
 
     
     def test_add_secret_wrong_input(self):
@@ -674,42 +635,6 @@ class FuncTests(unittest.TestCase):
         key_name_field = secrets_create_page.get_key_name_field()
         filled_key_name = key_name_field.get_attribute('value')
         assert filled_key_name == key_name_after_send
-    
-
-    def test_delete_secret(self):
-        # first create secret for delete
-        group_name = 'my-group'
-        cluster_name = 'my-cluster'
-        secret_name = 'test-delete-secret'
-        key_name = 'test-delete-key-name'
-        key_contents = 'test-delete-key-contents'
-
-        print('adding secret {} for delete secret test'.format(secret_name))
-        helpers = Helpers()
-        helpers.add_secret(self.driver, cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
-
-        created_secret = '{}: {}'.format(cluster_name, secret_name)
-        group_profile_page = page.GroupProfilePage(self.driver)
-        assert group_profile_page.is_page_valid()
-
-        created_secret_link = group_profile_page.get_secret_link(created_secret)
-        assert created_secret == created_secret_link.text
-        created_secret_link.click() # expand the secret_content_field
-        # find the delete button and click()
-        secret_field = '{}-{}'.format(cluster_name, secret_name) # 'my-cluster-test-delete-secret'
-        group_profile_page.get_secret_link_delete_btn(group_name, secret_field).click()
-
-        try:
-            print('before moving to alert')
-            alert = group_profile_page.switch_to_alert_popup()
-            alert.accept()
-            print('Alert pop up accepted')
-        except:
-            print('Error occur at confirming secret delete')
-
-        # confirm deletion
-        created_secret_link = group_profile_page.get_secret_link(created_secret)
-        assert not created_secret_link
     
 
     def tearDown(self):
@@ -791,6 +716,38 @@ class Helpers:
         print('Instance: {} installed'.format(app_name))
         return instance_detail_page
 
+    
+    def delete_instance(self, driver, app_name, app_suffix):
+        instances_page = self.segue_to_page(driver, 'instances')
+        instances_page.wait_until_instances_table_loaded()
+        instance_name = app_name + '-' + app_suffix
+        
+        instance_link = instances_page.get_instance_link(instance_name)
+
+        instance_link.click()
+        instance_detail_page = page.InstanceProfilePage(driver)
+        assert instance_detail_page.is_page_valid()
+
+        instance_name = instance_detail_page.get_instance_name()
+        cluster_name = instance_detail_page.get_cluster_name()
+        group_name = instance_detail_page.get_group_name()
+        
+        print('Click Delete button of {}'.format(instance_name))
+        instance_detail_page.get_delete_button().click()
+        try:
+            alert = instance_detail_page.switch_to_alert_popup()
+            # time.sleep(1)
+            alert.accept()
+            print('Alert pop up accepted')
+        except:
+            print('Error occur at confirming instance delete')
+
+        # check instance deleted
+        instances_page.wait_until_instances_table_loaded()
+        instance_link = instances_page.get_instance_link(instance_name)
+        assert not instance_link
+        print('Instance {} successfully deleted'.format(instance_name))
+
 
     def add_group(self, driver, group_name='valid-name', phone_number='555-5555', email='slate@slateci.io', field_of_science='Biology'):
         my_groups_page = self.segue_to_page(driver, 'my_groups')
@@ -804,8 +761,38 @@ class Helpers:
         create_new_group.fill_field_of_science(field_of_science)
         create_new_group.create_group()
         
-        cur_page = page.BasePage(driver)
-        assert cur_page.is_page_valid()
+        group_profile_page = page.GroupProfilePage(driver)
+        group_profile_page.wait_until_page_loaded()
+        assert group_profile_page.is_page_valid()
+        # confirm group added
+        assert group_name == group_profile_page.get_group_name()
+        print('group {} successfully added'.format(group_name))
+        
+
+    def delete_group(self, driver, group_name):
+        my_groups_page = self.segue_to_page(driver, 'my_groups')
+        my_groups_page.wait_until_groups_table_loaded()
+
+        group_link = my_groups_page.get_group_link(group_name)
+        group_link.click()
+
+        group_profile_page = page.GroupProfilePage(driver)
+        assert group_profile_page.is_page_valid()
+        group_profile_page.wait_until_page_loaded()
+        group_profile_page.get_delete_group_btn().click()
+        try:
+            alert = group_profile_page.switch_to_alert_popup()
+            # time.sleep(1)
+            alert.accept()
+            # alert.dismiss()
+            print('Alert pop up accepted')
+        except:
+            print('Error occur at confirming group delete')
+        
+        # confirm group deleted
+        group_link = my_groups_page.get_group_link(group_name)
+        assert not group_link
+        print('group {} successfully deleted'.format(group_name))
 
 
     def add_secret(self, driver, cluster_name='my-cluster', secret_name='valid-secret-name', key_name='valid-key-name', key_contents='valid-key-contents'):
@@ -840,6 +827,32 @@ class Helpers:
             self.add_secret(driver, cluster_name=cluster_name, secret_name=secret_name, key_name=key_name, key_contents=key_contents)
 
     
+    def delete_secret(self, driver, group_name, cluster_name, secret_name):
+        # prepare to delete secret
+        created_secret = '{}: {}'.format(cluster_name, secret_name)
+        group_profile_page = page.GroupProfilePage(driver)
+        assert group_profile_page.is_page_valid()
+
+        created_secret_link = group_profile_page.get_secret_link(created_secret)
+        assert created_secret == created_secret_link.text
+        created_secret_link.click() # expand the secret_content_field
+        # find the delete button and click()
+        secret_field = '{}-{}'.format(cluster_name, secret_name) # 'my-cluster-test-delete-secret'
+        group_profile_page.get_secret_link_delete_btn(group_name, secret_field).click()
+
+        try:
+            print('before moving to alert')
+            alert = group_profile_page.switch_to_alert_popup()
+            alert.accept()
+            print('Alert pop up accepted')
+        except:
+            print('Error occur at confirming secret delete')
+
+        # confirm deletion
+        created_secret_link = group_profile_page.get_secret_link(created_secret)
+        assert not created_secret_link
+
+
     def edit_group_on_edit_page(self, group_edit_page, email='selenium-test@slateci.io', phone_number='777-7777', field_of_science='Physics', description='Testing group edit functionality'):
         group_edit_page.update_email(email)
         group_edit_page.update_phone_number(phone_number)
