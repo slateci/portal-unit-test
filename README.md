@@ -121,7 +121,6 @@ This test is set up using the page object pattern detailed in the Selenium-Pytho
     │       ├── test_add_group_wrong_input          # try adding a group with wrong input
     │       ├── test_edit_group                     # edit "test-group" group
     │       ├── test_edit_group_wrong_input         # try editing a group with wrong input
-    │       ├── test_delete_group                   # delete "test-group" group
     │       ├── test_edit_cluster_in_group (in progress)
     │       ├── test_add_group_to_cluster (in progress)
     │       ├── test_revoke_group_from_cluster (in progress)
