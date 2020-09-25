@@ -234,7 +234,12 @@ class ClusterProfilePage(BasePage):
 
     def get_revoke_btn(self, group_to_revoke):
         return self.driver.find_element_by_xpath("//button[@name='remove_group'][@value='{}']".format(group_to_revoke))
-
+    
+    def get_added_group_link(self, group_name, cluster_name, group_added):
+        try:
+            return self.driver.find_element_by_xpath("//a[@href='/groups/{}/clusters/{}/{}']".format(group_name, cluster_name, group_added))
+        except:
+            return None
 
 class ClusterEditPage(BasePage):
     def wait_until_page_loaded(self):

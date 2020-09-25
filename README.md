@@ -122,8 +122,8 @@ This test is set up using the page object pattern detailed in the Selenium-Pytho
     │       ├── test_edit_group                     # edit "test-group" group
     │       ├── test_edit_group_wrong_input         # try editing a group with wrong input
     │       ├── test_edit_cluster_in_group (in progress)
-    │       ├── test_add_group_to_cluster (in progress)
-    │       ├── test_revoke_group_from_cluster (in progress)
+    │       ├── test_add_group_to_cluster           # allow a group to access the cluster
+    │       ├── test_revoke_group_from_cluster      # revoke a group's access to the cluster
     │       ├── test_add_and_delete_secret          # add and delete a secret
     │       └── test_add_secret_wrong_input         # trying adding a secret with wrong input
     └── ...
