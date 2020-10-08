@@ -25,7 +25,7 @@ class PortalBrowsing(unittest.TestCase):
         options.headless = True
         # options.headless = False
         path_local = '/opt/WebDriver/bin/chromedriver'
-        path_github_actions = '/home/runner/work/git-action-test/git-action-test/chromedriver'
+        path_github_actions = '/home/runner/work/slate-portal/slate-portal/chromedriver'
 
         self.driver = Chrome(executable_path=path_github_actions, options=options)
 
@@ -280,7 +280,7 @@ class FuncTests(unittest.TestCase):
         options.headless = True
         # options.headless = False
         path_local = '/opt/WebDriver/bin/chromedriver'
-        path_github_actions = '/home/runner/work/git-action-test/git-action-test/chromedriver'
+        path_github_actions = '/home/runner/work/slate-portal/slate-portal/chromedriver'
         self.driver = Chrome(executable_path=path_github_actions, options=options)
 
         # portal on minislate
