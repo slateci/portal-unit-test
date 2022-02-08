@@ -11,8 +11,9 @@ import os
 
 
 class BasePage():
-    def __init__(self, driver):
+    def __init__(self, driver, logger):
         self.driver = driver
+        self.logger = logger
     
     def get_page_title(self):
         page_title = self.driver.title
