@@ -1,11 +1,13 @@
-import time
+import sys
 import unittest
 
-from selenium.webdriver import Chrome, Firefox
+from selenium.webdriver import Chrome #, Firefox
 from selenium.webdriver.chrome.options import Options as ChromeOptions
 from selenium.webdriver.firefox.options import Options as FirefoxOptions
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
+
+from logtools import CustomLogging
 
 import page
 
@@ -13,30 +15,27 @@ import page
 
 
 class PortalBrowsing(unittest.TestCase):
+    __logger = CustomLogging('banana').get_logger();
+
+    URL = 'http://localhost:5000/slate_portal'
+
     def setUp(self):
+        options = ChromeOptions()
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--window-size=1920,1080')
+        self.driver = Chrome(options=options)
+
+        self.driver.get(self.URL)
+
+
         # test with Firefox, without headless()
         # self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver')
         # test with Firefox, with headless()
         # options = FirefoxOptions()
         # options.headless = True
         # self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver', options=options)
-
-        # test with chrome, without headless()
-        # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
-        # test with chrome, with headless()
-        options = ChromeOptions()
-        options.headless = True
-        # options.headless = False
-        path_local = "/opt/WebDriver/bin/chromedriver"
-        path_github_actions = "/home/runner/work/slate-portal/slate-portal/chromedriver"
-
-        self.driver = Chrome(executable_path=path_github_actions, options=options)
-
-        # portal on minislate
-        self.driver.get("http://localhost:5000/slate_portal")
-        # slate portal
-        # self.driver.get('https://portal.slateci.io/slate_portal')
-        self.driver.set_window_size(1920, 1080)
 
     def test_iterate_clusters_pages(self):
         helpers = Helpers()
@@ -52,9 +51,9 @@ class PortalBrowsing(unittest.TestCase):
             # print('page number', page_number)
 
             for i in range(num_of_links):
-                # print('Testing cluster page:', clusters_links[i].text)
+                self.__logger.info('Testing cluster page:', clusters_links[i].text)
                 clusters_links[i].click()
-                clusters_profile_page = page.ClusterPublicProfilePage(self.driver)
+                clusters_profile_page = page.ClusterPublicProfilePage(self.driver, self.__logger)
                 self.assertTrue(clusters_profile_page.is_page_valid())
                 self.driver.back()
                 clusters_page.wait_until_clusters_table_loaded()
@@ -90,9 +89,9 @@ class PortalBrowsing(unittest.TestCase):
                 # print('page number', page_number)
 
                 for i in range(number_of_links):
-                    # print('Testing app page:', app_links[i].text)
+                    self.__logger.info('Testing app page:', app_links[i].text)
                     app_links[i].click()
-                    app_detail_page = page.AppsDetailPage(self.driver)
+                    app_detail_page = page.AppsDetailPage(self.driver, self.__logger)
                     self.assertTrue(app_detail_page.is_page_valid())
                     self.driver.back()
 
@@ -133,9 +132,9 @@ class PortalBrowsing(unittest.TestCase):
             # print('page number', page_number)
 
             for i in range(num_of_links):
-                # print('Testing instance page:', instance_links[i].text)
+                self.__logger.info('Testing instance page:', instance_links[i].text)
                 instance_links[i].click()
-                instance_detail_page = page.InstanceProfilePage(self.driver)
+                instance_detail_page = page.InstanceProfilePage(self.driver, self.__logger)
                 self.assertTrue(instance_detail_page.is_page_valid())
                 self.driver.back()
                 instances_page.wait_until_instances_table_loaded()
@@ -171,9 +170,9 @@ class PortalBrowsing(unittest.TestCase):
             # print('page number', page_number)
 
             for i in range(num_of_links):
-                # print('Testing secret page:', secrets_links[i].text)
+                self.__logger.info('Testing secret page:', secrets_links[i].text)
                 secrets_links[i].click()
-                group_profile_page = page.GroupProfilePage(self.driver)
+                group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
                 self.assertTrue(group_profile_page.is_page_valid())
                 self.driver.back()
 
@@ -212,9 +211,9 @@ class PortalBrowsing(unittest.TestCase):
             # print('page number', page_number)
 
             for i in range(num_of_links):
-                # print('Testing group page:', my_groups_links[i].text)
+                self.__logger.info('Testing group page:', my_groups_links[i].text)
                 my_groups_links[i].click()
-                my_groups_detail_page = page.GroupProfilePage(self.driver)
+                my_groups_detail_page = page.GroupProfilePage(self.driver, self.__logger)
                 self.assertTrue(my_groups_detail_page.is_page_valid())
                 self.driver.back()
                 my_groups_page.wait_until_groups_table_loaded()
@@ -243,9 +242,9 @@ class PortalBrowsing(unittest.TestCase):
             # print('page number', page_number)
 
             for i in range(num_of_links):
-                # print('Testing group page:', all_groups_links[i].text)
+                self.__logger.info('Testing group page:', all_groups_links[i].text)
                 all_groups_links[i].click()
-                all_groups_detail_page = page.GroupProfilePage(self.driver)
+                all_groups_detail_page = page.GroupProfilePage(self.driver, self.__logger)
                 self.assertTrue(all_groups_detail_page.is_page_valid())
                 self.driver.back()
                 all_groups_page.wait_until_groups_table_loaded()
@@ -271,7 +270,20 @@ class PortalBrowsing(unittest.TestCase):
 
 
 class FuncTests(unittest.TestCase):
+    __logger = CustomLogging('banana').get_logger();
+
+    URL = 'http://localhost:5000/slate_portal'
+
     def setUp(self):
+        options = ChromeOptions()
+        options.add_argument('--disable-dev-shm-usage')
+        options.add_argument('--headless')
+        options.add_argument('--no-sandbox')
+        options.add_argument('--window-size=1920,1080')
+        self.driver = Chrome(options=options)
+
+        self.driver.get(self.URL)
+
         # test with Firefox, without headless()
         # self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver')
         # test with Firefox, with headless()
@@ -280,25 +292,9 @@ class FuncTests(unittest.TestCase):
         # options.headless = False
         # self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver', options=options)
 
-        # test with chrome, without headless()
-        # self.driver = Chrome('/opt/WebDriver/bin/chromedriver')
-        # test with chrome, with headless()
-        options = ChromeOptions()
-        options.headless = True
-        # options.headless = False
-        path_local = "/opt/WebDriver/bin/chromedriver"
-        path_github_actions = "/home/runner/work/slate-portal/slate-portal/chromedriver"
-        self.driver = Chrome(executable_path=path_github_actions, options=options)
-
-        # portal on minislate
-        self.driver.get("http://localhost:5000/slate_portal")
-        # slate portal
-        # self.driver.get('https://portal.slateci.io/slate_portal')
-        self.driver.set_window_size(1920, 1080)
-
     def test_add_and_delete_instance(self):
         helpers = Helpers()
-        # print('1) test_add_and_delete_instance')
+        self.__logger.info('1) test_add_and_delete_instance')
         # add a new instance
         app_name = "nginx"
         app_suffix = "test-add-and-delete"
@@ -309,7 +305,7 @@ class FuncTests(unittest.TestCase):
 
     def test_add_instance_wrong_input(self):
         helpers = Helpers()
-        # print('2) test_add_instance_with_wrong_input')
+        self.__logger.info('2) test_add_instance_with_wrong_input')
         app_name = "nginx"
         app_suffix = "test-add-with-wrong-input"
         apps_page = helpers.segue_to_page(self.driver, "applications")
@@ -318,15 +314,15 @@ class FuncTests(unittest.TestCase):
         app_link = apps_page.get_app_link(app_name)
 
         if app_link:
-            # print('installing', app_link.text)
+            self.__logger.info('installing', app_link.text)
             app_link.click()
-            app_detail_page = page.AppsDetailPage(self.driver)
+            app_detail_page = page.AppsDetailPage(self.driver, self.__logger)
             self.assertTrue(app_detail_page.is_page_valid())
             app_detail_page.wait_until_ready_for_install()
             app_detail_page.click_intall_app()
 
             # test missing group name
-            app_create_page = page.AppCreatePage(self.driver)
+            app_create_page = page.AppCreatePage(self.driver, self.__logger)
             self.assertTrue(app_create_page.is_page_valid())
             app_create_page.fill_group(group_name="")
             app_create_page.click_next()
@@ -340,7 +336,7 @@ class FuncTests(unittest.TestCase):
             app_create_page.click_next()
 
             # test missing cluster name
-            app_create_final_page = page.AppCreateFinalPage(self.driver)
+            app_create_final_page = page.AppCreateFinalPage(self.driver, self.__logger)
             self.assertTrue(app_create_final_page.is_page_valid())
             app_create_final_page.fill_cluster(cluster_name="")
             app_create_final_page.fill_configuration(app_suffix)
@@ -351,23 +347,23 @@ class FuncTests(unittest.TestCase):
             self.assertEqual(message, "Please select an item in the list.")
 
     def test_add_and_delete_group(self):
-        # print('3) test_add_and_delete_group')
+        self.__logger.info('3) test_add_and_delete_group')
         helpers = Helpers()
         # add group
         group_name = "test-add-and-delete-group"
-        # print('adding group {} for delete group test'.format(group_name))
+        self.__logger.info('adding group {} for delete group test'.format(group_name))
         helpers.add_group(self.driver, group_name=group_name)
         # delete group
-        # print('test_delete_group')
+        self.__logger.info('test_delete_group')
         helpers.delete_group(self.driver, group_name)
 
     def test_add_group_with_wrong_inputs(self):
-        # print('4) test_add_group_with_wrong_inputs')
+        self.__logger.info('4) test_add_group_with_wrong_inputs')
         helpers = Helpers()
         # test invalid group name
         invalid_group_name = "valid@name"
         helpers.attempt_add_group(self.driver, group_name=invalid_group_name)
-        create_new_group_page = page.CreateNewGroupPage(self.driver)
+        create_new_group_page = page.CreateNewGroupPage(self.driver, self.__logger)
         group_name_field = create_new_group_page.get_group_name_field()
         message = group_name_field.get_attribute("validationMessage")
         self.assertEqual(message, "Please match the requested format.")
@@ -375,7 +371,7 @@ class FuncTests(unittest.TestCase):
         # test empty phone number field
         empty_phone_number = ""
         helpers.attempt_add_group(self.driver, phone_number=empty_phone_number)
-        create_new_group_page = page.CreateNewGroupPage(self.driver)
+        create_new_group_page = page.CreateNewGroupPage(self.driver, self.__logger)
         phone_number_field = create_new_group_page.get_phone_number_field()
         message = phone_number_field.get_attribute("validationMessage")
         self.assertEqual(message, "Please fill out this field.")
@@ -383,7 +379,7 @@ class FuncTests(unittest.TestCase):
         # test invalid email (without '@')
         invalid_email = "slate-slateci.io"
         helpers.attempt_add_group(self.driver, email=invalid_email)
-        create_new_group_page = page.CreateNewGroupPage(self.driver)
+        create_new_group_page = page.CreateNewGroupPage(self.driver, self.__logger)
         email_field = create_new_group_page.get_email_field()
         message = email_field.get_attribute("validationMessage")
         self.assertEqual(
@@ -396,32 +392,32 @@ class FuncTests(unittest.TestCase):
         # test empty field of science
         empty_field_of_science = ""
         helpers.attempt_add_group(self.driver, field_of_science=empty_field_of_science)
-        create_new_group_page = page.CreateNewGroupPage(self.driver)
+        create_new_group_page = page.CreateNewGroupPage(self.driver, self.__logger)
         science_field = create_new_group_page.get_field_of_science()
         message = science_field.get_attribute("validationMessage")
         self.assertEqual(message, "Please select an item in the list.")
 
     def test_edit_group(self):
-        # print('5) test_edit_group')
+        self.__logger.info('5) test_edit_group')
         helpers = Helpers()
         # add group for edit
         group_name = "test-edit-group"
-        # print('adding group {} for edit group test'.format(group_name))
+        self.__logger.info('adding group {} for edit group test'.format(group_name))
         helpers.add_group(self.driver, group_name=group_name)
         # edit group
-        # print('test_edit_group')
+        self.__logger.info('test_edit_group')
         my_groups_page = helpers.segue_to_page(self.driver, "my_groups")
         my_groups_page.wait_until_groups_table_loaded()
 
         group_link = my_groups_page.get_group_link(group_name)
         group_link.click()
 
-        group_profile_page = page.GroupProfilePage(self.driver)
+        group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
         self.assertTrue(group_profile_page.is_page_valid())
         group_profile_page.wait_until_page_loaded()
         group_profile_page.get_edit_btn().click()
 
-        group_edit_page = page.GroupEditPage(self.driver)
+        group_edit_page = page.GroupEditPage(self.driver, self.__logger)
         self.assertTrue(group_edit_page.is_page_valid())
         group_edit_page.wait_until_form_loaded()
 
@@ -450,26 +446,26 @@ class FuncTests(unittest.TestCase):
         helpers.delete_group(self.driver, group_name)
 
     def test_edit_group_with_wrong_inputs(self):
-        # print('6) test_edit_new_group_with_wrong_inputs')
+        self.__logger.info('6) test_edit_new_group_with_wrong_inputs')
         helpers = Helpers()
         # add group for edit with wrong input
         group_name = "test-edit-group-wrong-input"
-        # print('adding group {} for edit group test'.format(group_name))
+        self.__logger.info('adding group {} for edit group test'.format(group_name))
         helpers.add_group(self.driver, group_name=group_name)
         # edit with wrong input
-        # print('test_edit_group_with_wrong_input')
+        self.__logger.info('test_edit_group_with_wrong_input')
         my_groups_page = helpers.segue_to_page(self.driver, "my_groups")
         my_groups_page.wait_until_groups_table_loaded()
 
         group_link = my_groups_page.get_group_link(group_name)
         group_link.click()
 
-        group_profile_page = page.GroupProfilePage(self.driver)
+        group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
         self.assertTrue(group_profile_page.is_page_valid())
         group_profile_page.wait_until_page_loaded()
         group_profile_page.get_edit_btn().click()
 
-        group_edit_page = page.GroupEditPage(self.driver)
+        group_edit_page = page.GroupEditPage(self.driver, self.__logger)
         self.assertTrue(group_edit_page.is_page_valid())
         group_edit_page.wait_until_form_loaded()
 
@@ -513,14 +509,14 @@ class FuncTests(unittest.TestCase):
         # enter the group page
         group_link = my_groups_page.get_group_link(group_name)
         group_link.click()
-        group_profile_page = page.GroupProfilePage(self.driver)
+        group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
         self.assertTrue(group_profile_page.is_page_valid())
         group_profile_page.wait_until_page_loaded()
         # enter the cluster page
         cluster_link = group_profile_page.get_cluster_link(cluster_name)
         cluster_link.click()
 
-        cluster_profile_page = page.ClusterProfilePage(self.driver)
+        cluster_profile_page = page.ClusterProfilePage(self.driver, self.__logger)
         self.assertTrue(cluster_profile_page.is_page_valid())
         cluster_profile_page.wait_until_page_loaded()
 
@@ -528,7 +524,7 @@ class FuncTests(unittest.TestCase):
         edit_info_btn = cluster_profile_page.get_edit_info_btn()
         edit_info_btn.click()
 
-        cluster_edit_page = page.ClusterEditPage(self.driver)
+        cluster_edit_page = page.ClusterEditPage(self.driver, self.__logger)
         self.assertTrue(cluster_edit_page.is_page_valid())
         cluster_edit_page.wait_until_page_loaded()
 
@@ -540,7 +536,7 @@ class FuncTests(unittest.TestCase):
 
         cluster_edit_page.get_update_btn().click()
 
-        nextPage = page.BasePage(self.driver)
+        nextPage = page.BasePage(self.driver, self.__logger)
         self.assertTrue(nextPage.is_page_valid())
 
         # test group selector
@@ -549,11 +545,11 @@ class FuncTests(unittest.TestCase):
         # add_group_btn.click()
 
     def test_add_group_to_cluster(self):
-        # print('7) test_add_group_to_cluster')
+        self.__logger.info('7) test_add_group_to_cluster')
         helpers = Helpers()
         # add group
         added_group_name = "test-add-group-to-cluster"
-        # print('adding group {} for delete group test'.format(added_group_name))
+        self.__logger.info('adding group {} for delete group test'.format(added_group_name))
         helpers.add_group(self.driver, group_name=added_group_name)
 
         # add group to cluster
@@ -564,14 +560,14 @@ class FuncTests(unittest.TestCase):
         # enter the group page
         group_link = my_groups_page.get_group_link(group_name)
         group_link.click()
-        group_profile_page = page.GroupProfilePage(self.driver)
+        group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
         self.assertTrue(group_profile_page.is_page_valid())
         group_profile_page.wait_until_page_loaded()
         # enter the cluster page
         cluster_link = group_profile_page.get_cluster_link(cluster_name)
         cluster_link.click()
 
-        cluster_profile_page = page.ClusterProfilePage(self.driver)
+        cluster_profile_page = page.ClusterProfilePage(self.driver, self.__logger)
         self.assertTrue(cluster_profile_page.is_page_valid())
         cluster_profile_page.wait_until_page_loaded()
 
@@ -589,11 +585,11 @@ class FuncTests(unittest.TestCase):
         helpers.delete_group(self.driver, added_group_name)
 
     def test_revoke_group_from_cluster(self):
-        # print('8) test_revoke_group_from_cluster')
+        self.__logger.info('8) test_revoke_group_from_cluster')
         helpers = Helpers()
         # add group
         added_group_name = "test-add-group-to-revoke-from-cluster"
-        # print('adding group {} for delete group test'.format(added_group_name))
+        self.__logger.info('adding group {} for delete group test'.format(added_group_name))
         helpers.add_group(self.driver, group_name=added_group_name)
 
         # add group to cluster
@@ -604,14 +600,14 @@ class FuncTests(unittest.TestCase):
         # enter the group page
         group_link = my_groups_page.get_group_link(group_name)
         group_link.click()
-        group_profile_page = page.GroupProfilePage(self.driver)
+        group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
         self.assertTrue(group_profile_page.is_page_valid())
         group_profile_page.wait_until_page_loaded()
         # enter the cluster page
         cluster_link = group_profile_page.get_cluster_link(cluster_name)
         cluster_link.click()
 
-        cluster_profile_page = page.ClusterProfilePage(self.driver)
+        cluster_profile_page = page.ClusterProfilePage(self.driver, self.__logger)
         self.assertTrue(cluster_profile_page.is_page_valid())
         cluster_profile_page.wait_until_page_loaded()
 
@@ -640,7 +636,7 @@ class FuncTests(unittest.TestCase):
         helpers.delete_group(self.driver, added_group_name)
 
     def test_add_and_delete_secret(self):
-        # print('9) test_add_and_delete_secret')
+        self.__logger.info('9) test_add_and_delete_secret')
         group_name = "my-group"
         cluster_name = "my-cluster"
         secret_name = "test-secret-with-helper"
@@ -657,7 +653,7 @@ class FuncTests(unittest.TestCase):
         )
         # confirm secret added
         created_secret = "{}: {}".format(cluster_name, secret_name)
-        group_profile_page = page.GroupProfilePage(self.driver)
+        group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
         self.assertTrue(group_profile_page.is_page_valid())
 
         created_secret_link = group_profile_page.get_secret_link(created_secret)
@@ -668,12 +664,12 @@ class FuncTests(unittest.TestCase):
         helpers.delete_secret(self.driver, group_name, cluster_name, secret_name)
 
     def test_add_secret_wrong_inputs(self):
-        # print('10) test_add_ecret_with_wrong_inputs')
+        self.__logger.info('10) test_add_ecret_with_wrong_inputs')
         # test cluster not selected
         cluster_not_selected = ""
         helpers = Helpers()
         helpers.add_secret(self.driver, cluster_name=cluster_not_selected)
-        secrets_create_page = page.SecretsCreatePage(self.driver)
+        secrets_create_page = page.SecretsCreatePage(self.driver, self.__logger)
         cluster_field = secrets_create_page.get_cluster_field()
         message = cluster_field.get_attribute("validationMessage")
         self.assertEqual(message, "Please select an item in the list.")
@@ -769,7 +765,7 @@ class Helpers:
             installed = True
 
         self.assertTrue(installed)
-        # print('Instance: {} installed'.format(app_name))
+        self.__logger.info('Instance: {} installed'.format(app_name))
         return instance_detail_page
 
     def delete_instance(self, driver, app_name, app_suffix):
@@ -787,22 +783,22 @@ class Helpers:
         cluster_name = instance_detail_page.get_cluster_name()
         group_name = instance_detail_page.get_group_name()
 
-        # print('Click Delete button of {}'.format(instance_name))
+        self.__logger.info('Click Delete button of {}'.format(instance_name))
         instance_detail_page.get_delete_button().click()
         try:
             alert = instance_detail_page.switch_to_alert_popup()
             # time.sleep(1)
             alert.accept()
-            # print('Alert pop up accepted')
+            self.__logger.info('Alert pop up accepted')
         except:
-            # print('Error occur at confirming instance delete')
+            self.__logger.debug('Error occur at confirming instance delete')
             pass
 
         # check instance deleted
         instances_page.wait_until_instances_table_loaded()
         instance_link = instances_page.get_instance_link(instance_name)
         self.assertFalse(instance_link)
-        # print('Instance {} successfully deleted'.format(instance_name))
+        self.__logger.info('Instance {} successfully deleted'.format(instance_name))
 
     def add_group(
         self,
@@ -828,7 +824,7 @@ class Helpers:
         self.assertTrue(group_profile_page.is_page_valid())
         # confirm group added
         self.assertEqual(group_name, group_profile_page.get_group_name())
-        # print('group {} successfully added'.format(group_name))
+        self.__logger.info('group {} successfully added'.format(group_name))
 
     def attempt_add_group(
         self,
@@ -872,15 +868,15 @@ class Helpers:
             # time.sleep(1)
             alert.accept()
             # alert.dismiss()
-            # print('Alert pop up accepted')
+            self.__logger.info('Alert pop up accepted')
         except:
-            # print('Error occur at confirming group delete')
+            self.__logger.debug('Error occur at confirming group delete')
             pass
 
         # confirm group deleted
         group_link = my_groups_page.get_group_link(group_name)
         self.assertFalse(group_link)
-        # print('group {} successfully deleted'.format(group_name))
+        self.__logger.info('group {} successfully deleted'.format(group_name))
 
     def add_secret(
         self,
@@ -964,12 +960,12 @@ class Helpers:
         group_profile_page.get_secret_link_delete_btn(group_name, secret_field).click()
 
         try:
-            # print('attempt to delete secret: {}'.format(secret_name))
+            self.__logger.info('attempt to delete secret: {}'.format(secret_name))
             alert = group_profile_page.switch_to_alert_popup()
             alert.accept()
-            # print('secret {} is deleted'.format(secret_name))
+            self.__logger.info('secret {} is deleted'.format(secret_name))
         except:
-            # print('Error occur at confirming secret delete')
+            self.__logger.debug('Error occur at confirming secret delete')
             pass
 
         # confirm deletion
@@ -993,4 +989,7 @@ class Helpers:
 
 
 if __name__ == "__main__":
+    if len(sys.argv) > 1:
+        PortalBrowsing.URL = sys.argv.pop()
+        FuncTests.URL = sys.argv.pop()
     unittest.main()
