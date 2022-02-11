@@ -44,33 +44,26 @@ In the [slateci-portal repo](https://github.com/slateci/slate-portal), the GitHu
 
 ### Docker
 
-Build the Docker image:
-
-```shell
-docker build --file Dockerfile --tag seleniumpy:latest .
-```
-
-* The Python installation in the image may be used as a remote interpreter in IDEs such as [VSCode](https://devblogs.microsoft.com/python/remote-python-development-in-visual-studio-code/) and [IntelliJ](https://www.jetbrains.com/help/idea/configuring-remote-python-sdks.html).
-
 #### Testing on Production
 
 Run the test suite on the production website:
 
 ```shell
-[your@localmachine ~]$ docker run -it -v $PWD:/opt/project seleniumpy:latest python main.py
+[your@localmachine ~]$ docker run -it -v $PWD:/opt/project hub.opensciencegrid.org/slate/python-chromedriver-selenium:3.9-alpine python main.py
 ...
 ...
 ...
 ```
 
 * Use the `$PWD:/opt/project` volume to mount files from the host to the container.
+* The Python installation in the image may be used as a remote interpreter in IDEs such as [VSCode](https://devblogs.microsoft.com/python/remote-python-development-in-visual-studio-code/) and [IntelliJ](https://www.jetbrains.com/help/idea/configuring-remote-python-sdks.html).
 
 #### Testing on Local Build
 
 Run the test suite on a local containerized build of the website:
 
 ```shell
-[your@localmachine ~]$ docker run -it -v $PWD:/opt/project seleniumpy:latest python main.py http://<host-fqdn>:5000
+[your@localmachine ~]$ docker run -it -v $PWD:/opt/project hub.opensciencegrid.org/slate/python-chromedriver-selenium:3.9-alpine python main.py http://<host-fqdn>:5000
 ...
 ...
 ...
