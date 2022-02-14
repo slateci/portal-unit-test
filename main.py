@@ -15,7 +15,7 @@ import page
 
 
 class PortalBrowsing(unittest.TestCase):
-    __logger = CustomLogging('banana').get_logger();
+    __logger = CustomLogging('banana').get_logger()
 
     URL = 'http://localhost:5000/slate_portal'
 
@@ -270,7 +270,7 @@ class PortalBrowsing(unittest.TestCase):
 
 
 class FuncTests(unittest.TestCase):
-    __logger = CustomLogging('banana').get_logger();
+    __logger = CustomLogging('banana').get_logger()
 
     URL = 'http://localhost:5000/slate_portal'
 
@@ -696,31 +696,33 @@ class FuncTests(unittest.TestCase):
 
 
 class Helpers:
+    __logger = CustomLogging('banana').get_logger()
+
     def segue_to_page(self, driver, page_name):
-        start_page = page.BasePage(driver)
+        start_page = page.BasePage(driver, self.__logger)
         self.assertTrue(start_page.is_page_valid())
         cur_page = None
         if page_name == "clusters":
             start_page.go_to_clusters_page()
-            cur_page = page.ClustersPage(driver)
+            cur_page = page.ClustersPage(driver, self.__logger)
         elif page_name == "applications":
             start_page.go_to_apps_page()
-            cur_page = page.AppsPage(driver)
+            cur_page = page.AppsPage(driver, self.__logger)
         elif page_name == "secrets":
             start_page.go_to_secrets_page()
-            cur_page = page.SecretsPage(driver)
+            cur_page = page.SecretsPage(driver, self.__logger)
         elif page_name == "instances":
             start_page.go_to_instances_page()
-            cur_page = page.InstancesPage(driver)
+            cur_page = page.InstancesPage(driver, self.__logger)
         elif page_name == "my_groups":
             start_page.go_to_my_groups_page()
-            cur_page = page.MyGroupsPage(driver)
+            cur_page = page.MyGroupsPage(driver, self.__logger)
         elif page_name == "all_groups":
             start_page.go_to_all_groups_page()
-            cur_page = page.GroupsPage(driver)
+            cur_page = page.GroupsPage(driver, self.__logger)
         elif page_name == "cli_access":
             start_page.go_to_cli_access_page()
-            cur_page = page.CLIAccessPage(driver)
+            cur_page = page.CLIAccessPage(driver, self.__logger)
         self.assertTrue(cur_page.is_page_valid())
         return cur_page
 
@@ -737,24 +739,24 @@ class Helpers:
         if app_link:
             # print('installing', app_link.text)
             app_link.click()
-            app_detail_page = page.AppsDetailPage(driver)
+            app_detail_page = page.AppsDetailPage(driver, self.__logger)
             self.assertTrue(app_detail_page.is_page_valid())
             app_detail_page.wait_until_ready_for_install()
             app_detail_page.click_intall_app()
 
-            app_create_page = page.AppCreatePage(driver)
+            app_create_page = page.AppCreatePage(driver, self.__logger)
             self.assertTrue(app_create_page.is_page_valid())
             app_create_page.fill_group()
             app_create_page.click_next()
 
-            app_create_final_page = page.AppCreateFinalPage(driver)
+            app_create_final_page = page.AppCreateFinalPage(driver, self.__logger)
             self.assertTrue(app_create_final_page.is_page_valid())
             app_create_final_page.fill_cluster()
             app_create_final_page.fill_configuration(app_suffix)
             app_create_final_page.click_install()
 
             # enter instance detail page; check instance name
-            instance_detail_page = page.InstanceProfilePage(driver)
+            instance_detail_page = page.InstanceProfilePage(driver, self.__logger)
             self.assertTrue(instance_detail_page.is_page_valid())
             instance_detail_page.wait_until_page_loaded()
 
@@ -810,7 +812,7 @@ class Helpers:
     ):
         my_groups_page = self.segue_to_page(driver, "my_groups")
         my_groups_page.get_register_new_group_btn().click()
-        create_new_group = page.CreateNewGroupPage(driver)
+        create_new_group = page.CreateNewGroupPage(driver, self.__logger)
         # create_new_group.wait_until_form_loaded()
 
         create_new_group.fill_group_name(group_name)
@@ -819,7 +821,7 @@ class Helpers:
         create_new_group.fill_field_of_science(field_of_science)
         create_new_group.create_group()
 
-        group_profile_page = page.GroupProfilePage(driver)
+        group_profile_page = page.GroupProfilePage(driver, self.__logger)
         group_profile_page.wait_until_page_loaded()
         self.assertTrue(group_profile_page.is_page_valid())
         # confirm group added
@@ -840,7 +842,7 @@ class Helpers:
         """
         my_groups_page = self.segue_to_page(driver, "my_groups")
         my_groups_page.get_register_new_group_btn().click()
-        create_new_group = page.CreateNewGroupPage(driver)
+        create_new_group = page.CreateNewGroupPage(driver, self.__logger)
         # create_new_group.wait_until_form_loaded()
 
         create_new_group.fill_group_name(group_name)
@@ -859,7 +861,7 @@ class Helpers:
         group_link = my_groups_page.get_group_link(group_name)
         group_link.click()
 
-        group_profile_page = page.GroupProfilePage(driver)
+        group_profile_page = page.GroupProfilePage(driver, self.__logger)
         self.assertTrue(group_profile_page.is_page_valid())
         group_profile_page.wait_until_page_loaded()
         group_profile_page.get_delete_group_btn().click()
@@ -894,14 +896,14 @@ class Helpers:
         group_link = my_groups_page.get_group_link(group_name)
         group_link.click()
 
-        group_profile_page = page.GroupProfilePage(driver)
+        group_profile_page = page.GroupProfilePage(driver, self.__logger)
         self.assertTrue(group_profile_page.is_page_valid())
         group_profile_page.wait_until_page_loaded
 
         group_profile_page.get_secrets_tab().click()
         group_profile_page.get_new_secret_btn().submit()
 
-        secrets_create_page = page.SecretsCreatePage(driver)
+        secrets_create_page = page.SecretsCreatePage(driver, self.__logger)
         secrets_create_page.fill_form_and_submit(
             cluster_name, secret_name, key_name, key_contents
         )
@@ -944,7 +946,7 @@ class Helpers:
         group_link.click()
         # prepare to delete secret
         created_secret = "{}: {}".format(cluster_name, secret_name)
-        group_profile_page = page.GroupProfilePage(driver)
+        group_profile_page = page.GroupProfilePage(driver, self.__logger)
         self.assertTrue(group_profile_page.is_page_valid())
         # group_profile_page.wait_until_page_loaded
         # click secrets tab
