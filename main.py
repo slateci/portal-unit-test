@@ -697,10 +697,11 @@ class FuncTests(unittest.TestCase):
 
 class Helpers:
     __logger = CustomLogging('banana').get_logger()
+    __testcase = unittest.TestCase()
 
     def segue_to_page(self, driver, page_name):
         start_page = page.BasePage(driver, self.__logger)
-        self.assertTrue(start_page.is_page_valid())
+        self.__testcase.assertTrue(start_page.is_page_valid())
         cur_page = None
         if page_name == "clusters":
             start_page.go_to_clusters_page()
@@ -723,7 +724,7 @@ class Helpers:
         elif page_name == "cli_access":
             start_page.go_to_cli_access_page()
             cur_page = page.CLIAccessPage(driver, self.__logger)
-        self.assertTrue(cur_page.is_page_valid())
+        self.__testcase.assertTrue(cur_page.is_page_valid())
         return cur_page
 
     def add_instance(self, driver, app_name, app_suffix=""):
@@ -740,33 +741,33 @@ class Helpers:
             # print('installing', app_link.text)
             app_link.click()
             app_detail_page = page.AppsDetailPage(driver, self.__logger)
-            self.assertTrue(app_detail_page.is_page_valid())
+            self.__testcase.assertTrue(app_detail_page.is_page_valid())
             app_detail_page.wait_until_ready_for_install()
             app_detail_page.click_intall_app()
 
             app_create_page = page.AppCreatePage(driver, self.__logger)
-            self.assertTrue(app_create_page.is_page_valid())
+            self.__testcase.assertTrue(app_create_page.is_page_valid())
             app_create_page.fill_group()
             app_create_page.click_next()
 
             app_create_final_page = page.AppCreateFinalPage(driver, self.__logger)
-            self.assertTrue(app_create_final_page.is_page_valid())
+            self.__testcase.assertTrue(app_create_final_page.is_page_valid())
             app_create_final_page.fill_cluster()
             app_create_final_page.fill_configuration(app_suffix)
             app_create_final_page.click_install()
 
             # enter instance detail page; check instance name
             instance_detail_page = page.InstanceProfilePage(driver, self.__logger)
-            self.assertTrue(instance_detail_page.is_page_valid())
+            self.__testcase.assertTrue(instance_detail_page.is_page_valid())
             instance_detail_page.wait_until_page_loaded()
 
             installed_app_name = instance_detail_page.get_app_name()
-            self.assertEqual(installed_app_name, app_name)
+            self.__testcase.assertEqual(installed_app_name, app_name)
 
             # change install flag to true
             installed = True
 
-        self.assertTrue(installed)
+        self.__testcase.assertTrue(installed)
         self.__logger.info('Instance: {} installed'.format(app_name))
         return instance_detail_page
 
@@ -779,7 +780,7 @@ class Helpers:
 
         instance_link.click()
         instance_detail_page = page.InstanceProfilePage(driver)
-        self.assertTrue(instance_detail_page.is_page_valid())
+        self.__testcase.assertTrue(instance_detail_page.is_page_valid())
 
         instance_name = instance_detail_page.get_instance_name()
         cluster_name = instance_detail_page.get_cluster_name()
@@ -799,7 +800,7 @@ class Helpers:
         # check instance deleted
         instances_page.wait_until_instances_table_loaded()
         instance_link = instances_page.get_instance_link(instance_name)
-        self.assertFalse(instance_link)
+        self.__testcase.assertFalse(instance_link)
         self.__logger.info('Instance {} successfully deleted'.format(instance_name))
 
     def add_group(
@@ -823,9 +824,9 @@ class Helpers:
 
         group_profile_page = page.GroupProfilePage(driver, self.__logger)
         group_profile_page.wait_until_page_loaded()
-        self.assertTrue(group_profile_page.is_page_valid())
+        self.__testcase.assertTrue(group_profile_page.is_page_valid())
         # confirm group added
-        self.assertEqual(group_name, group_profile_page.get_group_name())
+        self.__testcase.assertEqual(group_name, group_profile_page.get_group_name())
         self.__logger.info('group {} successfully added'.format(group_name))
 
     def attempt_add_group(
@@ -852,7 +853,7 @@ class Helpers:
         create_new_group.create_group()
 
         # group_profile_page = page.BasePage(driver)
-        # self.assertTrue(group_profile_page.is_page_valid())
+        # self.__testcase.assertTrue(group_profile_page.is_page_valid())
 
     def delete_group(self, driver, group_name):
         my_groups_page = self.segue_to_page(driver, "my_groups")
@@ -862,7 +863,7 @@ class Helpers:
         group_link.click()
 
         group_profile_page = page.GroupProfilePage(driver, self.__logger)
-        self.assertTrue(group_profile_page.is_page_valid())
+        self.__testcase.assertTrue(group_profile_page.is_page_valid())
         group_profile_page.wait_until_page_loaded()
         group_profile_page.get_delete_group_btn().click()
         try:
@@ -877,7 +878,7 @@ class Helpers:
 
         # confirm group deleted
         group_link = my_groups_page.get_group_link(group_name)
-        self.assertFalse(group_link)
+        self.__testcase.assertFalse(group_link)
         self.__logger.info('group {} successfully deleted'.format(group_name))
 
     def add_secret(
@@ -897,7 +898,7 @@ class Helpers:
         group_link.click()
 
         group_profile_page = page.GroupProfilePage(driver, self.__logger)
-        self.assertTrue(group_profile_page.is_page_valid())
+        self.__testcase.assertTrue(group_profile_page.is_page_valid())
         group_profile_page.wait_until_page_loaded
 
         group_profile_page.get_secrets_tab().click()
@@ -947,13 +948,13 @@ class Helpers:
         # prepare to delete secret
         created_secret = "{}: {}".format(cluster_name, secret_name)
         group_profile_page = page.GroupProfilePage(driver, self.__logger)
-        self.assertTrue(group_profile_page.is_page_valid())
+        self.__testcase.assertTrue(group_profile_page.is_page_valid())
         # group_profile_page.wait_until_page_loaded
         # click secrets tab
         group_profile_page.get_secrets_tab().click()
 
         created_secret_link = group_profile_page.get_secret_link(created_secret)
-        self.assertEqual(created_secret, created_secret_link.text)
+        self.__testcase.assertEqual(created_secret, created_secret_link.text)
         created_secret_link.click()  # expand the secret_content_field
         # find the delete button and click()
         secret_field = "{}-{}".format(
@@ -972,7 +973,7 @@ class Helpers:
 
         # confirm deletion
         created_secret_link = group_profile_page.get_secret_link(created_secret)
-        self.assertFalse(created_secret_link)
+        self.__testcase.assertFalse(created_secret_link)
 
     def edit_group_on_edit_page(
         self,
