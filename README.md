@@ -44,33 +44,25 @@ In the [slateci-portal repo](https://github.com/slateci/slate-portal), the GitHu
 
 ### Docker
 
-#### Testing on Production
-
-Run the test suite on the production website:
-
-```shell
-[your@localmachine ~]$ docker run -it -v $PWD:/opt/project hub.opensciencegrid.org/slate/python-chromedriver-selenium:3.9-debian python main.py
-...
-...
-...
-```
-
-* Use the `$PWD:/opt/project` volume to mount files from the host to the container.
-* The Python installation in the image may be used as a remote interpreter in IDEs such as [VSCode](https://devblogs.microsoft.com/python/remote-python-development-in-visual-studio-code/) and [IntelliJ](https://www.jetbrains.com/help/idea/configuring-remote-python-sdks.html).
-
 #### Testing on Local Build
 
-Run the test suite on a local containerized build of the website:
+Run the test suite on a local containerized build of the website powered by [minislate](https://github.com/slateci/minislate):
 
 ```shell
-[your@localmachine ~]$ docker run -it -v $PWD:/opt/project hub.opensciencegrid.org/slate/python-chromedriver-selenium:3.9-debian python main.py http://<host-fqdn>:5000
-...
+[your@localmachine ~]$ docker run -it -v $PWD:/opt/project --network="host" hub.opensciencegrid.org/slate/python-chromedriver-selenium:3.9-debian python main.py
+INFO     3) test_add_and_delete_group
+INFO     3) test_add_and_delete_group
+INFO     3) test_add_and_delete_group
+INFO     adding group test-add-and-delete-group for delete group test
+INFO     adding group test-add-and-delete-group for delete group test
+INFO     adding group test-add-and-delete-group for delete group test
 ...
 ...
 ```
 
 * Use the `$PWD:/opt/project` volume to mount files from the host to the container.
-* Configure the host firewall to allow traffic on port `5000`.
+* Pass a different URL option via `main.py <url>`.
+* The Python installation in the image may be used as a remote interpreter in IDEs such as [VSCode](https://devblogs.microsoft.com/python/remote-python-development-in-visual-studio-code/) and [IntelliJ](https://www.jetbrains.com/help/idea/configuring-remote-python-sdks.html).
 * Refer to [slateci/slate-portal](https://github.com/slateci/slate-portal) for additional information on running the portal locally.
 
 ### Local Machine
