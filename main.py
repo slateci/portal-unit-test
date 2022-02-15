@@ -51,7 +51,7 @@ class PortalBrowsing(unittest.TestCase):
             # print('page number', page_number)
 
             for i in range(num_of_links):
-                self.__logger.info('Testing cluster page:', clusters_links[i].text)
+                self.__logger.info('Testing cluster page: {}'.format(clusters_links[i].text))
                 clusters_links[i].click()
                 clusters_profile_page = page.ClusterPublicProfilePage(self.driver, self.__logger)
                 self.assertTrue(clusters_profile_page.is_page_valid())
@@ -89,7 +89,7 @@ class PortalBrowsing(unittest.TestCase):
                 # print('page number', page_number)
 
                 for i in range(number_of_links):
-                    self.__logger.info('Testing app page:', app_links[i].text)
+                    self.__logger.info('Testing app page: {}'.format(app_links[i].text))
                     app_links[i].click()
                     app_detail_page = page.AppsDetailPage(self.driver, self.__logger)
                     self.assertTrue(app_detail_page.is_page_valid())
@@ -132,7 +132,7 @@ class PortalBrowsing(unittest.TestCase):
             # print('page number', page_number)
 
             for i in range(num_of_links):
-                self.__logger.info('Testing instance page:', instance_links[i].text)
+                self.__logger.info('Testing instance page: {}'.format(instance_links[i].text))
                 instance_links[i].click()
                 instance_detail_page = page.InstanceProfilePage(self.driver, self.__logger)
                 self.assertTrue(instance_detail_page.is_page_valid())
@@ -170,7 +170,7 @@ class PortalBrowsing(unittest.TestCase):
             # print('page number', page_number)
 
             for i in range(num_of_links):
-                self.__logger.info('Testing secret page:', secrets_links[i].text)
+                self.__logger.info('Testing secret page: {}'.format(secrets_links[i].text))
                 secrets_links[i].click()
                 group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
                 self.assertTrue(group_profile_page.is_page_valid())
@@ -211,7 +211,7 @@ class PortalBrowsing(unittest.TestCase):
             # print('page number', page_number)
 
             for i in range(num_of_links):
-                self.__logger.info('Testing group page:', my_groups_links[i].text)
+                self.__logger.info('Testing group page: {}'.format(my_groups_links[i].text))
                 my_groups_links[i].click()
                 my_groups_detail_page = page.GroupProfilePage(self.driver, self.__logger)
                 self.assertTrue(my_groups_detail_page.is_page_valid())
@@ -242,7 +242,7 @@ class PortalBrowsing(unittest.TestCase):
             # print('page number', page_number)
 
             for i in range(num_of_links):
-                self.__logger.info('Testing group page:', all_groups_links[i].text)
+                self.__logger.info('Testing group page: {}'.format(all_groups_links[i].text))
                 all_groups_links[i].click()
                 all_groups_detail_page = page.GroupProfilePage(self.driver, self.__logger)
                 self.assertTrue(all_groups_detail_page.is_page_valid())
@@ -314,7 +314,7 @@ class FuncTests(unittest.TestCase):
         app_link = apps_page.get_app_link(app_name)
 
         if app_link:
-            self.__logger.info('installing', app_link.text)
+            self.__logger.info('installing {}'.format(app_link.text))
             app_link.click()
             app_detail_page = page.AppsDetailPage(self.driver, self.__logger)
             self.assertTrue(app_detail_page.is_page_valid())
