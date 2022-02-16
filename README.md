@@ -46,7 +46,7 @@ In the [slateci-portal repo](https://github.com/slateci/slate-portal), the GitHu
 
 ### Docker
 
-Run the test suite against a local Portal instance (default):
+Run the test suite against a clean local Portal instance (default: `http://localhost:5000/slate_portal`):
 
 ```shell
 [your@localmachine ~]$ docker run -it -v $PWD:/opt/project --network="host" hub.opensciencegrid.org/slate/python-chromedriver-selenium:3.9-debian python main.py
@@ -64,7 +64,19 @@ or specify a different Portal instance URL via `python main.py <url>`.
 
 * Use the `$PWD:/opt/project` volume to mount files from the host to the container.
 * The Python installation in the image may be used as a remote interpreter in IDEs such as [VSCode](https://devblogs.microsoft.com/python/remote-python-development-in-visual-studio-code/) and [IntelliJ](https://www.jetbrains.com/help/idea/configuring-remote-python-sdks.html).
-* Refer to [slateci/slate-portal](https://github.com/slateci/slate-portal) and [minislate](https://github.com/slateci/minislate) for additional information on running the portal locally.
+* Refer to [slateci/slate-portal](https://github.com/slateci/slate-portal) and [minislate](https://github.com/slateci/minislate) for additional information on running the Portal locally.
+
+#### Troubleshooting
+
+The webdriver is containerized and that unfortunately means running it without `options.add_argument('--headless')` will not work without a lot of extra steps. However, using screenshots can sometimes help isolate an issue. Drop code like the following into a desired location in the test suite.
+
+```python
+###########################################
+import time
+now = int(time.time())
+self.driver.save_screenshot('/opt/project/screenshots/{}.png'.format(now))
+###########################################
+```
 
 ### Local Machine
 
