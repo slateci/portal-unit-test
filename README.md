@@ -1,5 +1,7 @@
 # Selenium Web App Unit Test on SLATE Portal
 
+> **_IMPORTANT:_** This test suite adds and removes test data. Do not run on against a production Portal instance.
+
 [Selenium](https://www.selenium.dev/documentation/en/) is a framework for automating web applications tests. It runs on OS's such as Windows, Mac OS, Linux and Solaris. It's supported browsers include Chrome, FireFox, Edge, Internet Explorer, Safari and Opera. The Selenium client API supports Java, Python, C#, Ruby, JavaScript and Kotlin.
 
 This test is set up using the [page object pattern](https://selenium-python.readthedocs.io/page-objects.html) detailed in the Selenium-Python documentation.
@@ -44,9 +46,7 @@ In the [slateci-portal repo](https://github.com/slateci/slate-portal), the GitHu
 
 ### Docker
 
-#### Testing on Local Build
-
-Run the test suite on a local containerized build of the website powered by [minislate](https://github.com/slateci/minislate):
+Run the test suite against a local Portal instance (default):
 
 ```shell
 [your@localmachine ~]$ docker run -it -v $PWD:/opt/project --network="host" hub.opensciencegrid.org/slate/python-chromedriver-selenium:3.9-debian python main.py
@@ -60,10 +60,11 @@ INFO     adding group test-add-and-delete-group for delete group test
 ...
 ```
 
+or specify a different Portal instance URL via `python main.py <url>`.
+
 * Use the `$PWD:/opt/project` volume to mount files from the host to the container.
-* Pass a different URL option via `main.py <url>`.
 * The Python installation in the image may be used as a remote interpreter in IDEs such as [VSCode](https://devblogs.microsoft.com/python/remote-python-development-in-visual-studio-code/) and [IntelliJ](https://www.jetbrains.com/help/idea/configuring-remote-python-sdks.html).
-* Refer to [slateci/slate-portal](https://github.com/slateci/slate-portal) for additional information on running the portal locally.
+* Refer to [slateci/slate-portal](https://github.com/slateci/slate-portal) and [minislate](https://github.com/slateci/minislate) for additional information on running the portal locally.
 
 ### Local Machine
 
