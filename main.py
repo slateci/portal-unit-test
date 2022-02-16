@@ -779,7 +779,7 @@ class Helpers:
         instance_link = instances_page.get_instance_link(instance_name)
 
         instance_link.click()
-        instance_detail_page = page.InstanceProfilePage(driver)
+        instance_detail_page = page.InstanceProfilePage(driver, self.__logger)
         self.__testcase.assertTrue(instance_detail_page.is_page_valid())
 
         instance_name = instance_detail_page.get_instance_name()

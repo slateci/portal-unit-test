@@ -78,6 +78,9 @@ self.driver.save_screenshot('/opt/project/screenshots/{}.png'.format(now))
 ###########################################
 ```
 
+* Access the images in `$PWD/screenshots` (ignored by Git).
+* **Note:** Since the container is running as `root` Linux hosts will need to use `sudo` to remove the files or run `rm screenshots/*` from within the container itself.
+
 ### Local Machine
 
 #### Minimum Requirements
