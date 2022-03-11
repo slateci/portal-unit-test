@@ -46,7 +46,7 @@ In the [slateci-portal repo](https://github.com/slateci/slate-portal), the GitHu
 
 ### Docker
 
-Run the test suite against a clean local Portal instance (default: `http://localhost:5000/slate_portal`):
+Run the test suite against a clean local Portal instance (default: `http://localhost:5050/slate_portal`):
 
 ```shell
 [your@localmachine ~]$ docker run -it -v $PWD:/opt/project --network="host" hub.opensciencegrid.org/slate/python-chromedriver-selenium:3.9-debian python main.py

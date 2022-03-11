@@ -17,7 +17,7 @@ import page
 class PortalBrowsing(unittest.TestCase):
     __logger = CustomLogging('banana').get_logger()
 
-    URL = 'http://localhost:5000/slate_portal'
+    URL = 'http://localhost:5050/slate_portal'
 
     def setUp(self):
         options = ChromeOptions()
@@ -272,7 +272,7 @@ class PortalBrowsing(unittest.TestCase):
 class FuncTests(unittest.TestCase):
     __logger = CustomLogging('banana').get_logger()
 
-    URL = 'http://localhost:5000/slate_portal'
+    URL = 'http://localhost:5050/slate_portal'
 
     def setUp(self):
         options = ChromeOptions()
