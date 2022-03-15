@@ -11,7 +11,3 @@ rebates/logs/
 !/*requirements.txt
 *.iif
 *.pem
-
-# IDE metadata
-.idea/
-.vscode/
