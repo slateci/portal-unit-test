@@ -54,7 +54,7 @@ class PortalBrowsing(unittest.TestCase):
                 self.__logger.info('Testing cluster page: {}'.format(clusters_links[i].text))
                 clusters_links[i].click()
                 clusters_profile_page = page.ClusterPublicProfilePage(self.driver, self.__logger)
-                self.assertTrue(clusters_profile_page.is_page_valid())
+                self.assertTrue(clusters_profile_page.is_page_valid(), f"{clusters_profile_page.get_page_title()} is not valid.")
                 self.driver.back()
                 clusters_page.wait_until_clusters_table_loaded()
                 clusters_page.click_cur_page(page_number)
@@ -92,7 +92,7 @@ class PortalBrowsing(unittest.TestCase):
                     self.__logger.info('Testing app page: {}'.format(app_links[i].text))
                     app_links[i].click()
                     app_detail_page = page.AppsDetailPage(self.driver, self.__logger)
-                    self.assertTrue(app_detail_page.is_page_valid())
+                    self.assertTrue(app_detail_page.is_page_valid(), f"{app_detail_page.get_page_title()} is not valid.")
                     self.driver.back()
 
                     if tab_name == "Incubator Applications":
@@ -135,7 +135,7 @@ class PortalBrowsing(unittest.TestCase):
                 self.__logger.info('Testing instance page: {}'.format(instance_links[i].text))
                 instance_links[i].click()
                 instance_detail_page = page.InstanceProfilePage(self.driver, self.__logger)
-                self.assertTrue(instance_detail_page.is_page_valid())
+                self.assertTrue(instance_detail_page.is_page_valid(), f"{instance_detail_page.get_page_title()} is not valid.")
                 self.driver.back()
                 instances_page.wait_until_instances_table_loaded()
                 instances_page.click_cur_page(page_number)
@@ -173,7 +173,7 @@ class PortalBrowsing(unittest.TestCase):
                 self.__logger.info('Testing secret page: {}'.format(secrets_links[i].text))
                 secrets_links[i].click()
                 group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
-                self.assertTrue(group_profile_page.is_page_valid())
+                self.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
                 self.driver.back()
 
                 secrets_page.wait_until_secrets_table_loaded()
@@ -214,7 +214,7 @@ class PortalBrowsing(unittest.TestCase):
                 self.__logger.info('Testing group page: {}'.format(my_groups_links[i].text))
                 my_groups_links[i].click()
                 my_groups_detail_page = page.GroupProfilePage(self.driver, self.__logger)
-                self.assertTrue(my_groups_detail_page.is_page_valid())
+                self.assertTrue(my_groups_detail_page.is_page_valid(), f"{my_groups_detail_page.get_page_title()} is not valid.")
                 self.driver.back()
                 my_groups_page.wait_until_groups_table_loaded()
                 my_groups_page.click_cur_page(page_number)
@@ -245,7 +245,7 @@ class PortalBrowsing(unittest.TestCase):
                 self.__logger.info('Testing group page: {}'.format(all_groups_links[i].text))
                 all_groups_links[i].click()
                 all_groups_detail_page = page.GroupProfilePage(self.driver, self.__logger)
-                self.assertTrue(all_groups_detail_page.is_page_valid())
+                self.assertTrue(all_groups_detail_page.is_page_valid(), f"{all_groups_detail_page.get_page_title()} is not valid.")
                 self.driver.back()
                 all_groups_page.wait_until_groups_table_loaded()
                 all_groups_page.click_cur_page(page_number)
@@ -317,13 +317,13 @@ class FuncTests(unittest.TestCase):
             self.__logger.info('installing {}'.format(app_link.text))
             app_link.click()
             app_detail_page = page.AppsDetailPage(self.driver, self.__logger)
-            self.assertTrue(app_detail_page.is_page_valid())
+            self.assertTrue(app_detail_page.is_page_valid(), f"{app_detail_page.get_page_title()} is not valid.")
             app_detail_page.wait_until_ready_for_install()
             app_detail_page.click_intall_app()
 
             # test missing group name
             app_create_page = page.AppCreatePage(self.driver, self.__logger)
-            self.assertTrue(app_create_page.is_page_valid())
+            self.assertTrue(app_create_page.is_page_valid(), f"{app_create_page.get_page_title()} is not valid.")
             app_create_page.fill_group(group_name="")
             app_create_page.click_next()
 
@@ -337,7 +337,7 @@ class FuncTests(unittest.TestCase):
 
             # test missing cluster name
             app_create_final_page = page.AppCreateFinalPage(self.driver, self.__logger)
-            self.assertTrue(app_create_final_page.is_page_valid())
+            self.assertTrue(app_create_final_page.is_page_valid(), f"{app_create_final_page.get_page_title()} is not valid.")
             app_create_final_page.fill_cluster(cluster_name="")
             app_create_final_page.fill_configuration(app_suffix)
             app_create_final_page.click_install()
@@ -413,12 +413,12 @@ class FuncTests(unittest.TestCase):
         group_link.click()
 
         group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
-        self.assertTrue(group_profile_page.is_page_valid())
+        self.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
         group_profile_page.wait_until_page_loaded()
         group_profile_page.get_edit_btn().click()
 
         group_edit_page = page.GroupEditPage(self.driver, self.__logger)
-        self.assertTrue(group_edit_page.is_page_valid())
+        self.assertTrue(group_edit_page.is_page_valid(), f"{group_edit_page.get_page_title()} is not valid.")
         group_edit_page.wait_until_form_loaded()
 
         new_email = "selenium-test@slateci.io"
@@ -435,7 +435,7 @@ class FuncTests(unittest.TestCase):
 
         # confirm group info updated
         group_profile_page.wait_until_page_loaded()
-        self.assertTrue(group_profile_page.is_page_valid())
+        self.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
         self.assertEqual(
             group_profile_page.get_field_of_science(), new_field_of_science
         )
@@ -461,12 +461,12 @@ class FuncTests(unittest.TestCase):
         group_link.click()
 
         group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
-        self.assertTrue(group_profile_page.is_page_valid())
+        self.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
         group_profile_page.wait_until_page_loaded()
         group_profile_page.get_edit_btn().click()
 
         group_edit_page = page.GroupEditPage(self.driver, self.__logger)
-        self.assertTrue(group_edit_page.is_page_valid())
+        self.assertTrue(group_edit_page.is_page_valid(), f"{group_edit_page.get_page_title()} is not valid.")
         group_edit_page.wait_until_form_loaded()
 
         # test invalid email input
@@ -510,14 +510,14 @@ class FuncTests(unittest.TestCase):
         group_link = my_groups_page.get_group_link(group_name)
         group_link.click()
         group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
-        self.assertTrue(group_profile_page.is_page_valid())
+        self.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
         group_profile_page.wait_until_page_loaded()
         # enter the cluster page
         cluster_link = group_profile_page.get_cluster_link(cluster_name)
         cluster_link.click()
 
         cluster_profile_page = page.ClusterProfilePage(self.driver, self.__logger)
-        self.assertTrue(cluster_profile_page.is_page_valid())
+        self.assertTrue(cluster_profile_page.is_page_valid(), f"{cluster_profile_page.get_page_title()} is not valid.")
         cluster_profile_page.wait_until_page_loaded()
 
         # test edit button
@@ -525,7 +525,7 @@ class FuncTests(unittest.TestCase):
         edit_info_btn.click()
 
         cluster_edit_page = page.ClusterEditPage(self.driver, self.__logger)
-        self.assertTrue(cluster_edit_page.is_page_valid())
+        self.assertTrue(cluster_edit_page.is_page_valid(), f"{cluster_edit_page.get_page_title()} is not valid.")
         cluster_edit_page.wait_until_page_loaded()
 
         cluster_edit_page.set_org_field("SLATE1")
@@ -537,7 +537,7 @@ class FuncTests(unittest.TestCase):
         cluster_edit_page.get_update_btn().click()
 
         nextPage = page.BasePage(self.driver, self.__logger)
-        self.assertTrue(nextPage.is_page_valid())
+        self.assertTrue(nextPage.is_page_valid(), f"{nextPage.get_page_title()} is not valid.")
 
         # test group selector
         # cluster_profile_page.set_group_selector('test-add-group')
@@ -561,14 +561,14 @@ class FuncTests(unittest.TestCase):
         group_link = my_groups_page.get_group_link(group_name)
         group_link.click()
         group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
-        self.assertTrue(group_profile_page.is_page_valid())
+        self.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
         group_profile_page.wait_until_page_loaded()
         # enter the cluster page
         cluster_link = group_profile_page.get_cluster_link(cluster_name)
         cluster_link.click()
 
         cluster_profile_page = page.ClusterProfilePage(self.driver, self.__logger)
-        self.assertTrue(cluster_profile_page.is_page_valid())
+        self.assertTrue(cluster_profile_page.is_page_valid(), f"{cluster_profile_page.get_page_title()} is not valid.")
         cluster_profile_page.wait_until_page_loaded()
 
         # test group selector
@@ -601,14 +601,14 @@ class FuncTests(unittest.TestCase):
         group_link = my_groups_page.get_group_link(group_name)
         group_link.click()
         group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
-        self.assertTrue(group_profile_page.is_page_valid())
+        self.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
         group_profile_page.wait_until_page_loaded()
         # enter the cluster page
         cluster_link = group_profile_page.get_cluster_link(cluster_name)
         cluster_link.click()
 
         cluster_profile_page = page.ClusterProfilePage(self.driver, self.__logger)
-        self.assertTrue(cluster_profile_page.is_page_valid())
+        self.assertTrue(cluster_profile_page.is_page_valid(), f"{cluster_profile_page.get_page_title()} is not valid.")
         cluster_profile_page.wait_until_page_loaded()
 
         # test group selector
@@ -654,7 +654,7 @@ class FuncTests(unittest.TestCase):
         # confirm secret added
         created_secret = "{}: {}".format(cluster_name, secret_name)
         group_profile_page = page.GroupProfilePage(self.driver, self.__logger)
-        self.assertTrue(group_profile_page.is_page_valid())
+        self.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
 
         created_secret_link = group_profile_page.get_secret_link(created_secret)
         self.assertEqual(created_secret, created_secret_link.text)
@@ -701,7 +701,7 @@ class Helpers:
 
     def segue_to_page(self, driver, page_name):
         start_page = page.BasePage(driver, self.__logger)
-        self.__testcase.assertTrue(start_page.is_page_valid())
+        self.__testcase.assertTrue(start_page.is_page_valid(), f"{start_page.get_page_title()} is not valid.")
         cur_page = None
         if page_name == "clusters":
             start_page.go_to_clusters_page()
@@ -724,7 +724,7 @@ class Helpers:
         elif page_name == "cli_access":
             start_page.go_to_cli_access_page()
             cur_page = page.CLIAccessPage(driver, self.__logger)
-        self.__testcase.assertTrue(cur_page.is_page_valid())
+        self.__testcase.assertTrue(cur_page.is_page_valid(), f"{cur_page.get_page_title()} is not valid.")
         return cur_page
 
     def add_instance(self, driver, app_name, app_suffix=""):
@@ -741,24 +741,24 @@ class Helpers:
             # print('installing', app_link.text)
             app_link.click()
             app_detail_page = page.AppsDetailPage(driver, self.__logger)
-            self.__testcase.assertTrue(app_detail_page.is_page_valid())
+            self.__testcase.assertTrue(app_detail_page.is_page_valid(), f"{app_detail_page.get_page_title()} is not valid.")
             app_detail_page.wait_until_ready_for_install()
             app_detail_page.click_intall_app()
 
             app_create_page = page.AppCreatePage(driver, self.__logger)
-            self.__testcase.assertTrue(app_create_page.is_page_valid())
+            self.__testcase.assertTrue(app_create_page.is_page_valid(), f"{app_create_page.get_page_title()} is not valid.")
             app_create_page.fill_group()
             app_create_page.click_next()
 
             app_create_final_page = page.AppCreateFinalPage(driver, self.__logger)
-            self.__testcase.assertTrue(app_create_final_page.is_page_valid())
+            self.__testcase.assertTrue(app_create_final_page.is_page_valid(), f"{app_create_final_page.get_page_title()} is not valid.")
             app_create_final_page.fill_cluster()
             app_create_final_page.fill_configuration(app_suffix)
             app_create_final_page.click_install()
 
             # enter instance detail page; check instance name
             instance_detail_page = page.InstanceProfilePage(driver, self.__logger)
-            self.__testcase.assertTrue(instance_detail_page.is_page_valid())
+            self.__testcase.assertTrue(instance_detail_page.is_page_valid(), f"{instance_detail_page.get_page_title()} is not valid.")
             instance_detail_page.wait_until_page_loaded()
 
             installed_app_name = instance_detail_page.get_app_name()
@@ -780,7 +780,7 @@ class Helpers:
 
         instance_link.click()
         instance_detail_page = page.InstanceProfilePage(driver, self.__logger)
-        self.__testcase.assertTrue(instance_detail_page.is_page_valid())
+        self.__testcase.assertTrue(instance_detail_page.is_page_valid(), f"{instance_detail_page.get_page_title()} is not valid.")
 
         instance_name = instance_detail_page.get_instance_name()
         cluster_name = instance_detail_page.get_cluster_name()
@@ -824,7 +824,7 @@ class Helpers:
 
         group_profile_page = page.GroupProfilePage(driver, self.__logger)
         group_profile_page.wait_until_page_loaded()
-        self.__testcase.assertTrue(group_profile_page.is_page_valid())
+        self.__testcase.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
         # confirm group added
         self.__testcase.assertEqual(group_name, group_profile_page.get_group_name())
         self.__logger.info('group {} successfully added'.format(group_name))
@@ -853,7 +853,7 @@ class Helpers:
         create_new_group.create_group()
 
         # group_profile_page = page.BasePage(driver)
-        # self.__testcase.assertTrue(group_profile_page.is_page_valid())
+        # self.__testcase.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
 
     def delete_group(self, driver, group_name):
         my_groups_page = self.segue_to_page(driver, "my_groups")
@@ -863,7 +863,7 @@ class Helpers:
         group_link.click()
 
         group_profile_page = page.GroupProfilePage(driver, self.__logger)
-        self.__testcase.assertTrue(group_profile_page.is_page_valid())
+        self.__testcase.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
         group_profile_page.wait_until_page_loaded()
         group_profile_page.get_delete_group_btn().click()
         try:
@@ -898,7 +898,7 @@ class Helpers:
         group_link.click()
 
         group_profile_page = page.GroupProfilePage(driver, self.__logger)
-        self.__testcase.assertTrue(group_profile_page.is_page_valid())
+        self.__testcase.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
         group_profile_page.wait_until_page_loaded
 
         group_profile_page.get_secrets_tab().click()
@@ -948,7 +948,7 @@ class Helpers:
         # prepare to delete secret
         created_secret = "{}: {}".format(cluster_name, secret_name)
         group_profile_page = page.GroupProfilePage(driver, self.__logger)
-        self.__testcase.assertTrue(group_profile_page.is_page_valid())
+        self.__testcase.assertTrue(group_profile_page.is_page_valid(), f"{group_profile_page.get_page_title()} is not valid.")
         # group_profile_page.wait_until_page_loaded
         # click secrets tab
         group_profile_page.get_secrets_tab().click()
