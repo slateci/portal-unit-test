@@ -81,15 +81,15 @@ class AppsPage(BasePage):
         table_id = 'apps-table'
         if tab_name == 'Incubator Applications':
             table_id = 'incubator-apps-table'
-        apps_table = self.driver.find_element_by_id(table_id)
-        app_links = apps_table.find_elements_by_tag_name('a')
+        apps_table = self.driver.find_element(by=By.ID, value=table_id)
+        app_links = apps_table.find_elements(by=By.TAG_NAME, value='a')
         return app_links
     
     def click_cur_page(self, tab_name, page_number):
         pages_id = 'apps-table_paginate'
         if tab_name == 'Incubator Applications':
             pages_id = 'incubator-apps-table_paginate'
-        pages = self.driver.find_element_by_id(pages_id)
+        pages = self.driver.find_element(by=By.ID, value=pages_id)
         page_to_click = WebDriverWait(pages, 20).until(
             EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
         )
@@ -100,7 +100,7 @@ class AppsPage(BasePage):
         next_btn_id = 'apps-table_next'
         if tab_name == 'Incubator Applications':
             next_btn_id = 'incubator-apps-table_next'
-        return self.driver.find_element_by_id(next_btn_id)
+        return self.driver.find_element(by=By.ID, value=next_btn_id)
 
     def get_stable_apps_tab(self):
         return self.driver.find_element(*AppsPageLocators.STABLE_APPS_TAB)
@@ -119,9 +119,9 @@ class AppsPage(BasePage):
         click_next = True
         while click_next:
             self.wait_until_apps_table_loaded('Stable Applications')
-            apps_table = self.driver.find_element_by_id('apps-table')
+            apps_table = self.driver.find_element(by=By.ID, value='apps-table')
             try:
-                app_link = apps_table.find_element_by_link_text(app_name)
+                app_link = apps_table.find_element(by=By.LINK_TEXT, value=app_name)
                 click_next = False
                 return app_link
             except:
@@ -149,11 +149,11 @@ class AppCreatePage(BasePage):
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//select[@id='group']/option[@value='{}']".format(group_name)))
         )
-        select = Select(self.driver.find_element_by_id('group'))
+        select = Select(self.driver.find_element(by=By.ID, value='group'))
         select.select_by_value(group_name)
     
     def get_group_field(self):
-        return self.driver.find_element_by_id('group')
+        return self.driver.find_element(by=By.ID, value='group')
     
     def click_next(self):
         self.driver.find_element(*AppCreatePageLocators.NEXT_BTN).click()
@@ -164,14 +164,14 @@ class AppCreateFinalPage(BasePage):
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH, "//select[@id='cluster']/option[@value='{}']".format(cluster_name)))
         )
-        select = Select(self.driver.find_element_by_id('cluster'))
+        select = Select(self.driver.find_element(by=By.ID, value='cluster'))
         select.select_by_value(cluster_name)
     
     def get_cluster_field(self):
-        return self.driver.find_element_by_id('cluster')
+        return self.driver.find_element(by=By.ID, value='cluster')
 
     def fill_configuration(self, app_suffix=''):
-        conf_field = self.driver.find_element_by_id('config')
+        conf_field = self.driver.find_element(by=By.ID, value='config')
         # print(conf_field.text)
         config_arr = conf_field.text.split('\n')
         # add suffix to app name
@@ -194,12 +194,12 @@ class ClustersPage(BasePage):
         )
 
     def get_clusters_links_on_cur_page(self):
-        clusters_table = self.driver.find_element_by_id('cluster-table')
-        clusters_links = clusters_table.find_elements_by_tag_name('a')
+        clusters_table = self.driver.find_element(by=By.ID, value='cluster-table')
+        clusters_links = clusters_table.find_elements(by=By.TAG_NAME, value='a')
         return clusters_links
 
     def click_cur_page(self, page_number):
-        pages = self.driver.find_element_by_id('cluster-table_paginate')
+        pages = self.driver.find_element(by=By.ID, value='cluster-table_paginate')
         page_to_click = WebDriverWait(pages, 20).until(
             EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
         )
@@ -207,7 +207,7 @@ class ClustersPage(BasePage):
             page_to_click.click()
 
     def get_next_button(self):
-        return self.driver.find_element_by_id('cluster-table_next')
+        return self.driver.find_element(by=By.ID, value='cluster-table_next')
 
 
 class ClusterPublicProfilePage(BasePage):
@@ -221,24 +221,24 @@ class ClusterProfilePage(BasePage):
         )
 
     def get_edit_info_btn(self):
-        return self.driver.find_element_by_link_text('Edit Info')
+        return self.driver.find_element(by=By.LINK_TEXT, value='Edit Info')
 
     def get_group_selector(self):
-        return self.driver.find_element_by_id('new_group')
+        return self.driver.find_element(by=By.ID, value='new_group')
     
     def set_group_selector(self, group_name):
         selector = self.get_group_selector()
         selector.send_keys(group_name)
 
     def get_add_group_btn(self, cluster_name):
-        return self.driver.find_element_by_xpath("//form[@action='/groups/my-group/clusters/{}']/button[1]".format(cluster_name))
+        return self.driver.find_element(by=By.XPATH, value="//form[@action='/groups/my-group/clusters/{}']/button[1]".format(cluster_name))
 
     def get_revoke_btn(self, group_to_revoke):
-        return self.driver.find_element_by_xpath("//button[@name='remove_group'][@value='{}']".format(group_to_revoke))
+        return self.driver.find_element(by=By.XPATH, value="//button[@name='remove_group'][@value='{}']".format(group_to_revoke))
     
     def get_added_group_link(self, group_name, cluster_name, group_added):
         try:
-            return self.driver.find_element_by_xpath("//a[@href='/groups/{}/clusters/{}/{}']".format(group_name, cluster_name, group_added))
+            return self.driver.find_element(by=By.XPATH, value="//a[@href='/groups/{}/clusters/{}/{}']".format(group_name, cluster_name, group_added))
         except:
             return None
 
@@ -249,7 +249,7 @@ class ClusterEditPage(BasePage):
         )
     
     def get_org_field(self):
-        return self.driver.find_element_by_id('owningOrganization')
+        return self.driver.find_element(by=By.ID, value='owningOrganization')
 
     def set_org_field(self, org_name):
         org_field = self.get_org_field()
@@ -257,7 +257,7 @@ class ClusterEditPage(BasePage):
         org_field.send_keys(org_name)
 
     def get_latitude_field(self):
-        return self.driver.find_element_by_id('latitude')
+        return self.driver.find_element(by=By.ID, value='latitude')
 
     def set_latitude_field(self, latitude):
         lat_field = self.get_latitude_field()
@@ -265,7 +265,7 @@ class ClusterEditPage(BasePage):
         lat_field.send_keys(latitude)
 
     def get_longitude_field(self):
-        return self.driver.find_element_by_id('longitude')
+        return self.driver.find_element(by=By.ID, value='longitude')
 
     def set_longitude_field(self, longitude):
         long_field = self.get_longitude_field()
@@ -273,7 +273,7 @@ class ClusterEditPage(BasePage):
         long_field.send_keys(longitude)
 
     def get_update_btn(self):
-        return self.driver.find_element_by_xpath("//button[@class='btn btn-primary']")
+        return self.driver.find_element(by=By.XPATH, value="//button[@class='btn btn-primary']")
 
 
 
@@ -288,7 +288,7 @@ class SecretsPage(BasePage):
         return secrets_links
 
     def click_cur_page(self, page_number):
-        pages = self.driver.find_element_by_id('secrets-table_paginate')
+        pages = self.driver.find_element(by=By.ID, value='secrets-table_paginate')
         page_to_click = WebDriverWait(pages, 20).until(
             EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
         )
@@ -296,7 +296,7 @@ class SecretsPage(BasePage):
             page_to_click.click()
 
     def get_next_button(self):
-        return self.driver.find_element_by_id('secrets-table_next')
+        return self.driver.find_element(by=By.ID, value='secrets-table_next')
 
 
 class SecretGroupPage(BasePage):
@@ -310,30 +310,30 @@ class SecretsCreatePage(BasePage):
     #     )
 
     def get_cluster_field(self):
-        return self.driver.find_element_by_id('cluster')
+        return self.driver.find_element(by=By.ID, value='cluster')
 
     def select_cluster(self, cluster_name):
-        cluster_field = self.driver.find_element_by_id('cluster')
+        cluster_field = self.driver.find_element(by=By.ID, value='cluster')
         cluster_field.send_keys(cluster_name)
     
     def get_secret_name_field(self):
-        return self.driver.find_element_by_id('secret_name')
+        return self.driver.find_element(by=By.ID, value='secret_name')
 
     def fill_secret_name(self, secret_name):
-        secret_name_field = self.driver.find_element_by_id('secret_name')
+        secret_name_field = self.driver.find_element(by=By.ID, value='secret_name')
         secret_name_field.clear()
         secret_name_field.send_keys(secret_name)
 
     def get_key_name_field(self):
-        return self.driver.find_element_by_id('key_name')
+        return self.driver.find_element(by=By.ID, value='key_name')
 
     def fill_key_name(self, key_name):
-        key_name_field = self.driver.find_element_by_id('key_name')
+        key_name_field = self.driver.find_element(by=By.ID, value='key_name')
         key_name_field.clear()
         key_name_field.send_keys(key_name)
 
     def fill_key_contents(self, key_contents):
-        key_contents_field = self.driver.find_element_by_id('key_contents')
+        key_contents_field = self.driver.find_element(by=By.ID, value='key_contents')
         key_contents_field.clear()
         key_contents_field.send_keys(key_contents)
 
@@ -341,7 +341,7 @@ class SecretsCreatePage(BasePage):
         pass
 
     def get_add_secret_btn(self):
-        return self.driver.find_element_by_xpath("//button[@type='submit'][@class='btn btn-primary']")
+        return self.driver.find_element(by=By.XPATH, value="//button[@type='submit'][@class='btn btn-primary']")
     
     def fill_form_and_submit(self, cluster_name, secret_name, key_name, key_contents):
         self.driver.implicitly_wait(5)
@@ -359,12 +359,12 @@ class InstancesPage(BasePage):
         )
 
     def get_instance_links_on_cur_page(self):
-        instances_table = self.driver.find_element_by_id('instance-table')
-        instance_links = instances_table.find_elements_by_tag_name('a')
+        instances_table = self.driver.find_element(by=By.ID, value='instance-table')
+        instance_links = instances_table.find_elements(by=By.TAG_NAME, value='a')
         return instance_links
 
     def click_cur_page(self, page_number):
-        pages = self.driver.find_element_by_id('instance-table_paginate')
+        pages = self.driver.find_element(by=By.ID, value='instance-table_paginate')
         page_to_click = WebDriverWait(pages, 20).until(
             EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
         )
@@ -372,16 +372,16 @@ class InstancesPage(BasePage):
             page_to_click.click()
 
     def get_next_button(self):
-        return self.driver.find_element_by_id('instance-table_next')
+        return self.driver.find_element(by=By.ID, value='instance-table_next')
     
     def get_instance_link(self, instance_name):
         page_number = 1
         click_next = True
         while click_next:
             self.wait_until_instances_table_loaded()
-            instances_table = self.driver.find_element_by_id('instance-table')
+            instances_table = self.driver.find_element(by=By.ID, value='instance-table')
             try:
-                instance_link = instances_table.find_element_by_link_text(instance_name)
+                instance_link = instances_table.find_element(by=By.LINK_TEXT, value=instance_name)
                 click_next = False
                 return instance_link
             except:
@@ -400,23 +400,23 @@ class InstanceProfilePage(BasePage):
             EC.presence_of_element_located((By.ID, 'details'))
         )
     def get_instance_name(self):
-        instance_name = self.driver.find_element_by_xpath("//div[@class='col-lg-12 mx-auto']/h2[1]")
+        instance_name = self.driver.find_element(by=By.XPATH, value="//div[@class='col-lg-12 mx-auto']/h2[1]")
         return instance_name.text.split()[-1]
 
     def get_app_name(self):
-        app_name = self.driver.find_element_by_xpath("//div[@class='col-lg-12 mx-auto']/h6[2]")
+        app_name = self.driver.find_element(by=By.XPATH, value="//div[@class='col-lg-12 mx-auto']/h6[2]")
         return app_name.text.split()[-1]
 
     def get_cluster_name(self):
-        cluster_name = self.driver.find_element_by_xpath("//div[@class='col-lg-12 mx-auto']/h6[4]")
+        cluster_name = self.driver.find_element(by=By.XPATH, value="//div[@class='col-lg-12 mx-auto']/h6[4]")
         return cluster_name.text.split()[-1]
     
     def get_group_name(self):
-        group_name = self.driver.find_element_by_xpath("//div[@class='col-lg-12 mx-auto']/h6[5]")
+        group_name = self.driver.find_element(by=By.XPATH, value="//div[@class='col-lg-12 mx-auto']/h6[5]")
         return group_name.text.split()[-1]
     
     def get_delete_button(self):
-        delete_button = self.driver.find_element_by_link_text('Delete Instance')
+        delete_button = self.driver.find_element(by=By.LINK_TEXT, value='Delete Instance')
         return delete_button
     
     def switch_to_alert_popup(self):
@@ -430,8 +430,8 @@ class GroupsPage(BasePage):
         )
     
     def get_group_links_on_cur_page(self):
-        groups_table = self.driver.find_element_by_id('groups-table')
-        group_links = groups_table.find_elements_by_tag_name('a')
+        groups_table = self.driver.find_element(by=By.ID, value='groups-table')
+        group_links = groups_table.find_elements(by=By.TAG_NAME, value='a')
         return group_links
 
     def get_group_link(self, group_name):
@@ -439,9 +439,9 @@ class GroupsPage(BasePage):
         click_next = True
         while click_next:
             self.wait_until_groups_table_loaded()
-            groups_table = self.driver.find_element_by_id('groups-table')
+            groups_table = self.driver.find_element(by=By.ID, value='groups-table')
             try:
-                group_link = groups_table.find_element_by_link_text(group_name)
+                group_link = groups_table.find_element(by=By.LINK_TEXT, value=group_name)
                 click_next = False
                 return group_link
             except:
@@ -454,12 +454,12 @@ class GroupsPage(BasePage):
         return None
 
     def get_group_link_2(self, group_name):
-        groups_table = self.driver.find_element_by_id('groups-table')
-        group = groups_table.find_element_by_link_text(group_name)
+        groups_table = self.driver.find_element(by=By.ID, value='groups-table')
+        group = groups_table.find_element(by=By.LINK_TEXT, value=group_name)
         return group
 
     def click_cur_page(self, page_number):
-        pages = self.driver.find_element_by_id('groups-table_paginate')
+        pages = self.driver.find_element(by=By.ID, value='groups-table_paginate')
         page_to_click = WebDriverWait(pages, 20).until(
             EC.presence_of_element_located((By.LINK_TEXT, str(page_number)))
         )
@@ -467,12 +467,12 @@ class GroupsPage(BasePage):
             page_to_click.click()
 
     def get_next_button(self):
-        return self.driver.find_element_by_id('groups-table_next')
+        return self.driver.find_element(by=By.ID, value='groups-table_next')
 
 
 class MyGroupsPage(GroupsPage):
     def get_register_new_group_btn(self):
-        return self.driver.find_element_by_link_text('Register New Group')
+        return self.driver.find_element(by=By.LINK_TEXT, value='Register New Group')
 
 
 class CreateNewGroupPage(BasePage):
@@ -481,43 +481,43 @@ class CreateNewGroupPage(BasePage):
             EC.presence_of_element_located((By.ID, 'cli-access')))
 
     def get_group_name_field(self):
-        return self.driver.find_element_by_id('name')
+        return self.driver.find_element(by=By.ID, value='name')
 
     def fill_group_name(self, group_name):
-        group_name_field = self.driver.find_element_by_id('name')
+        group_name_field = self.driver.find_element(by=By.ID, value='name')
         group_name_field.clear()
         group_name_field.send_keys(group_name)
     
     def get_phone_number_field(self):
-        return self.driver.find_element_by_id('phone-number')
+        return self.driver.find_element(by=By.ID, value='phone-number')
 
     def fill_phone_number(self, phone_number):
-        phone_number_field = self.driver.find_element_by_id('phone-number')
+        phone_number_field = self.driver.find_element(by=By.ID, value='phone-number')
         phone_number_field.clear()
         phone_number_field.send_keys(phone_number)
     
     def get_email_field(self):
-        return self.driver.find_element_by_id('email')
+        return self.driver.find_element(by=By.ID, value='email')
     
     def fill_email(self, email):
-        email_field = self.driver.find_element_by_id('email')
+        email_field = self.driver.find_element(by=By.ID, value='email')
         email_field.clear()
         email_field.send_keys(email)
 
     def get_field_of_science(self):
-        return self.driver.find_element_by_id('field-of-science')
+        return self.driver.find_element(by=By.ID, value='field-of-science')
 
 
     def fill_field_of_science(self, field_of_science):
-        field = self.driver.find_element_by_id('field-of-science')
+        field = self.driver.find_element(by=By.ID, value='field-of-science')
         field.send_keys(field_of_science)
     
     def fill_description(self, description):
-        description_field = self.driver.find_element_by_id('description')
+        description_field = self.driver.find_element(by=By.ID, value='description')
         description_field.send_keys(description)
     
     def create_group(self):
-        create_btn = self.driver.find_element_by_xpath("//button[@type='submit'][@class='btn btn-primary']")
+        create_btn = self.driver.find_element(by=By.XPATH, value="//button[@type='submit'][@class='btn btn-primary']")
         create_btn.click()
 
 
@@ -527,30 +527,30 @@ class GroupProfilePage(BasePage):
             EC.presence_of_element_located((By.ID, 'accessible-clusters-table_next')))
     
     def get_group_name(self):
-        group_name = self.driver.find_element_by_xpath("//div[@id='group-info']/span[1]/h2[1]")
+        group_name = self.driver.find_element(by=By.XPATH, value="//div[@id='group-info']/span[1]/h2[1]")
         return group_name.text.split()[-1]
     
     def get_description(self):
-        description = self.driver.find_element_by_xpath("//div[@id='group-info']/span[1]/p[1]")
+        description = self.driver.find_element(by=By.XPATH, value="//div[@id='group-info']/span[1]/p[1]")
         return description.text
 
     def get_field_of_science(self):
-        field_of_science = self.driver.find_element_by_xpath("//div[@id='group-info']/span[1]/p[2]")
+        field_of_science = self.driver.find_element(by=By.XPATH, value="//div[@id='group-info']/span[1]/p[2]")
         return field_of_science.text.split()[-1]
 
     def get_email(self):
-        email = self.driver.find_element_by_xpath("//div[@id='group-info']/span[1]/p[3]")
+        email = self.driver.find_element(by=By.XPATH, value="//div[@id='group-info']/span[1]/p[3]")
         return email.text.split()[-1]
 
     def get_phone_number(self):
-        phone_number = self.driver.find_element_by_xpath("//div[@id='group-info']/span[1]/p[4]")
+        phone_number = self.driver.find_element(by=By.XPATH, value="//div[@id='group-info']/span[1]/p[4]")
         return phone_number.text.split()[-1]
 
     def get_edit_btn(self):
-        return self.driver.find_element_by_link_text('Edit Info') 
+        return self.driver.find_element(by=By.LINK_TEXT, value='Edit Info') 
 
     def get_delete_group_btn(self):
-        return self.driver.find_element_by_xpath("//div[@aria-label='second group']/form[1]")
+        return self.driver.find_element(by=By.XPATH, value="//div[@aria-label='second group']/form[1]")
 
     def switch_to_alert_popup(self):
         return self.driver.switch_to.alert
@@ -560,13 +560,13 @@ class GroupProfilePage(BasePage):
             EC.presence_of_element_located((By.ID, 'table-data'))
             )
         try:
-            link = self.driver.find_element_by_link_text(cluster_name)
+            link = self.driver.find_element(by=By.LINK_TEXT, value=cluster_name)
             return link
         except:
             return None
     
     def get_secrets_tab(self):
-        return self.driver.find_element_by_id('secrets_tab')
+        return self.driver.find_element(by=By.ID, value='secrets_tab')
 
     def get_new_secret_btn(self):
         new_secret_btn = WebDriverWait(self.driver, 20).until(
@@ -579,7 +579,7 @@ class GroupProfilePage(BasePage):
             EC.presence_of_element_located((By.ID, 'secrets-vue'))
             )
         try:
-            link = self.driver.find_element_by_link_text(created_secret)
+            link = self.driver.find_element(by=By.LINK_TEXT, value=created_secret)
             return link
         except:
             return None
@@ -590,7 +590,7 @@ class GroupProfilePage(BasePage):
             EC.visibility_of_element_located((By.ID, content_field))
             )
         
-        return self.driver.find_element_by_xpath("//div[@id='{}']/div[1]/form[1]/button[1]".format(secret_field))
+        return self.driver.find_element(by=By.XPATH, value="//div[@id='{}']/div[1]/form[1]/button[1]".format(secret_field))
 
 
 
@@ -600,35 +600,35 @@ class GroupEditPage(BasePage):
             EC.presence_of_element_located((By.ID, 'cli-access')))
     
     def get_email_field(self):
-        return self.driver.find_element_by_id('email')
+        return self.driver.find_element(by=By.ID, value='email')
     
     def update_email(self, email):
-        email_field = self.driver.find_element_by_id('email')
+        email_field = self.driver.find_element(by=By.ID, value='email')
         email_field.clear()
         email_field.send_keys(email)
 
     def get_phone_number_field(self):
-        return self.driver.find_element_by_id('phone-number')
+        return self.driver.find_element(by=By.ID, value='phone-number')
     
     def update_phone_number(self, phone_number):
-        phone_number_field = self.driver.find_element_by_id('phone-number')
+        phone_number_field = self.driver.find_element(by=By.ID, value='phone-number')
         phone_number_field.clear()
         phone_number_field.send_keys(phone_number)
     
     def get_science_field(self):
-        return self.driver.find_element_by_id('field-of-science')
+        return self.driver.find_element(by=By.ID, value='field-of-science')
 
     def update_field_of_science(self, field_of_science):
-        field_sc = self.driver.find_element_by_id('field-of-science')
+        field_sc = self.driver.find_element(by=By.ID, value='field-of-science')
         field_sc.send_keys(field_of_science)
     
     def update_description(self, description):
-        description_field = self.driver.find_element_by_id('description')
+        description_field = self.driver.find_element(by=By.ID, value='description')
         description_field.clear()
         description_field.send_keys(description)
     
     def update_group(self):
-        update_btn = self.driver.find_element_by_xpath("//button[@type='submit'][@class='btn btn-primary btn-box-shadow']")
+        update_btn = self.driver.find_element(by=By.XPATH, value="//button[@type='submit'][@class='btn btn-primary btn-box-shadow']")
         update_btn.click()
 
 class CLIAccessPage(BasePage):
