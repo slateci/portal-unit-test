@@ -51,7 +51,7 @@ In the [slateci-portal repo](https://github.com/slateci/slate-portal), the GitHu
 Run the test suite against a clean local Portal instance (default: `http://localhost:5050/slate_portal`):
 
 ```shell
-[your@localmachine ~]$ docker run -it -v $PWD:/opt/project --network="host" hub.opensciencegrid.org/slate/python-chromedriver-selenium:3.9-debian python main.py
+[your@localmachine ~]$ docker run -it -v $PWD:/opt/project --network="host" joyzoursky/python-chromedriver:3.9-selenium python /opt/project/main.py
 INFO     3) test_add_and_delete_group
 INFO     3) test_add_and_delete_group
 INFO     3) test_add_and_delete_group
@@ -62,7 +62,7 @@ INFO     adding group test-add-and-delete-group for delete group test
 ...
 ```
 
-or specify a different Portal instance URL via `python main.py <url>`.
+or specify a different Portal instance URL via `python main.py <url>/slate_portal`.
 
 * Use the `$PWD:/opt/project` volume to mount files from the host to the container.
 * The Python installation in the image may be used as a remote interpreter in IDEs such as [VSCode](https://devblogs.microsoft.com/python/remote-python-development-in-visual-studio-code/) and [IntelliJ](https://www.jetbrains.com/help/idea/configuring-remote-python-sdks.html).

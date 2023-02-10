@@ -17,8 +17,6 @@ import page
 class PortalBrowsing(unittest.TestCase):
     __logger = CustomLogging('banana').get_logger()
 
-    URL = 'http://localhost:5050/slate_portal'
-
     def setUp(self):
         options = ChromeOptions()
         options.add_argument('--disable-dev-shm-usage')
@@ -27,7 +25,8 @@ class PortalBrowsing(unittest.TestCase):
         options.add_argument('--window-size=1920,1080')
         self.driver = Chrome(options=options)
 
-        self.driver.get(self.URL)
+        self.__logger.info(f"URL under test: {url_under_test}")
+        self.driver.get(url_under_test)
 
 
         # test with Firefox, without headless()
@@ -272,8 +271,6 @@ class PortalBrowsing(unittest.TestCase):
 class FuncTests(unittest.TestCase):
     __logger = CustomLogging('banana').get_logger()
 
-    URL = 'http://localhost:5050/slate_portal'
-
     def setUp(self):
         options = ChromeOptions()
         options.add_argument('--disable-dev-shm-usage')
@@ -282,7 +279,8 @@ class FuncTests(unittest.TestCase):
         options.add_argument('--window-size=1920,1080')
         self.driver = Chrome(options=options)
 
-        self.driver.get(self.URL)
+        self.__logger.info(f"URL under test: {url_under_test}")
+        self.driver.get(url_under_test)
 
         # test with Firefox, without headless()
         # self.driver = Firefox(executable_path='/opt/WebDriver/bin/geckodriver')
@@ -993,6 +991,7 @@ class Helpers:
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        PortalBrowsing.URL = sys.argv.pop()
-        FuncTests.URL = sys.argv.pop()
+        url_under_test = sys.argv.pop()
+    else:
+        url_under_test = 'http://localhost:5050/slate_portal'
     unittest.main()
