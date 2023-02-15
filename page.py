@@ -284,7 +284,7 @@ class SecretsPage(BasePage):
         )
 
     def get_secret_links_on_cur_page(self):
-        secrets_links = self.driver.find_elements_by_xpath("//td[@class='sorting_1']/a[1]")
+        secrets_links = self.driver.find_elements(by=By.XPATH, value="//td[@class='sorting_1']/a[1]")
         return secrets_links
 
     def click_cur_page(self, page_number):
