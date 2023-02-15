@@ -38,8 +38,8 @@ This test is set up using the [page object pattern](https://selenium-python.read
 
 ### GitHub Actions
 
-In the [slateci-portal repo](https://github.com/slateci/slate-portal), the GitHub Actions testing procedure is set up in [selenium-tests.yml](https://github.com/slateci/slate-portal/blob/master/.github/workflows/selenium-tests.yml). The test is set up tp run on `push` or `pull request` to the `master` branch of the [slateci.io repository](https://github.com/slateci/slateci.github.io). Below is the list of the test setup and running procedure:
-1. Setup Python 3.8
+In the [slateci-portal repo](https://github.com/slateci/slate-portal), the GitHub Actions testing procedure is set up in [integration-tests.yml](https://github.com/slateci/slate-portal/actions/runs/4176523104/workflow). The test is set up tp run on `push` or `pull request` to the `master` branch of the [slateci/slate-portal repository](https://github.com/slateci/slate-portal). Below is the list of the test setup and running procedure:
+1. Setup Python 3.10
 2. Install Selenium Python bindings
 3. Install Chrome web driver. After installation, the path to the web driver will be at `/home/runner/work/slateci.github.io/slateci.github.io/chromedriver`
 4. Download Selenium test. The test program in this repository will be downloaded to the GitHub Actions VM in the [slateci-portal repo](https://github.com/slateci/slate-portal)
